@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
         widget.cpp \
     client.cpp \
-    mserver.cpp
+    mserver.cpp \
+    socketcliente.cpp
 
 HEADERS += \
         widget.h \
     client.h \
-    mserver.h
+    mserver.h \
+    socketcliente.h
 
 FORMS += \
         widget.ui

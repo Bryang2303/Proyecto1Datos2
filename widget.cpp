@@ -31,13 +31,29 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     //Client *s = new Client();
     //connect(ui->pushButton, &QPushButton::clicked, this, &Widget::cerrarApp);
+    conexion = new SocketCliente;
+    if(!conexion->connectar())
+        QMessageBox::critical(this,"Error","Error al conectar con el servidor",QMessageBox::Ok);
+
+    connect(conexion,SIGNAL(NewMensaje(QString)),SLOT(printMensaje(QString)));
+    connect(ui->pushButton_8,SIGNAL(clicked()),SLOT(sendMensaje()));
 }
 
 Widget::~Widget()
 {
     delete ui;
+    //string s1 = "int arise = 12;";
+    //string s2 = "int";
+    //string s3 = ";";
+
+    //if(strstr(s1.c_str(),s2.c_str()))
+    //{
+    //    if(strstr(s1.c_str(),"=")){
+
+    //        cout << " S1 Contains an equalizer";
 }
 
 void Widget::Recon(QStringList codelines){
@@ -49,9 +65,6 @@ void Widget::Recon(QStringList codelines){
         boost::split(lineDivided, line, boost::is_any_of(" "));
 
         string last = lineDivided[lineDivided.size()-1];
-
-        //remove(lineDivided.begin(), lineDivided.end(), lineDivided[lineDivided.size()-1][lineDivided[lineDivided.size()-1].size()-1]);
-        //cout << lineDivided[lineDivided.size()-1][lineDivided[lineDivided.size()-1].size()-1] << endl;
         if (lineDivided.size()<2){
             cout << "Error en linea " << i << endl;
 
@@ -106,90 +119,66 @@ void Widget::Recon(QStringList codelines){
                 cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
             }
 
-
-
         } else if (lineDivided[0]=="float"){
-            cout << "Doble" << endl;
+            string tipo = "float";
+            string nombre = lineDivided[1];
+            string espacio = "4";
+
+            if (lineDivided.size()>3 && lineDivided[2]=="=" && last[last.size()-1]=='f'){
+                try {
+                    float f;
+                    if(istringstream(last.substr (0,last.length()-1)) >> f)
+                    {
+                        string valor = last.substr (0,last.length()-1);
+                        cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
+
+                    } else {
+                        throw "Error en la asignacion de valor a una variable en linea ";
+                    }
+
+                } catch(const char* msg) {
+                    cout << msg << i << endl;
+                }
+            } else {
+                cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
+            }
 
         } else if (lineDivided[0]=="long"){
-            cout << "Largo" << endl;
+            string tipo = "long";
+            string nombre = lineDivided[1];
+            string espacio = "8";
+
+            if (lineDivided.size()>3 && lineDivided[2]=="=" && last[last.size()-1]=='f'){
+                try {
+                    float f;
+                    if(istringstream(last.substr (0,last.length()-1)) >> f)
+                    {
+                        string valor = last.substr (0,last.length()-1);
+                        cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
+
+                    } else {
+                        throw "Error en la asignacion de valor a una variable en linea ";
+                    }
+
+                } catch(const char* msg) {
+                    cout << msg << i << endl;
+                }
+            } else {
+                cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
+            }
 
         }
 
     }
 }
 
-
-void Widget::on_pushButton_clicked()
-{
-
-    array<QLineEdit*, 15> const m_edits = {ui->lineEdit,ui->lineEdit_2,ui->lineEdit_3,ui->lineEdit_4,ui->lineEdit_5,ui->lineEdit_6,ui->lineEdit_7,ui->lineEdit_8,ui->lineEdit_9,ui->lineEdit_10,ui->lineEdit_11,ui->lineEdit_12,ui->lineEdit_13,ui->lineEdit_14,ui->lineEdit_15};
-
-    //QLineEdit *key = m_edits[i];
-    //QString qw = m_edits[1]->text();
-    //string cadenaStd = qw.toUtf8().constData();;
-    //cout << qw.toStdString() << " sdf" << endl;
-    //QString key3 = ui->lineEdit->text();
-    //cout << key3.toStdString() << endl;
-    for (int i = 0; i < 15; i++) {
-        QString linea = m_edits[i]->text();
-        cout << linea.toStdString() << "\n";
-    }
-    //close();
-
-}
-
-void Widget::on_pushButton_2_clicked()
-{
-    auto key = ui->textE->toPlainText().toUtf8().constData();
-    cout << key << endl;
-    int longitud;
-    longitud = strlen(key);
-    cout << longitud << endl;
-
-    int i;
-    const char *w = " ";
-    string q="";
-    string foo[6];
-    cout << w[0] << endl;
-    for (int i = 0; i < longitud; i++) {
-        if (key[i]==w[0]){
-            cout << "key[i]" << "\n";
-        } else {
-            q+=key[i];
-
-        }
-        cout << q << "\n";
-      //cout << key[i] << "\n";
-    }
-
-
-    //Client *s = new Client();
-
-    ui->textEdit->setText(ui->textE->toPlainText());
-
-}
 
 void Widget::on_pushButton_3_clicked()
 {
     Client *clientGUI = new Client();
 }
 
-void Widget::on_pushButton_5_clicked()
-{
 
-    string s1 = "int arise = 12;";
-    string s2 = "int";
-    string s3 = ";";
-
-    if(strstr(s1.c_str(),s2.c_str()))
-    {
-        if(strstr(s1.c_str(),"=")){
-
-            cout << " S1 Contains an equalizer";
-        }
-    }
-}
 
 void Widget::on_pushButton_6_clicked()
 {
@@ -199,4 +188,15 @@ void Widget::on_pushButton_6_clicked()
     Recon(lines);
 
 
+}
+
+void Widget::sendMensaje()
+{
+    conexion->setMensaje(ui->lineEdit_16->text().toStdString().c_str());
+
+}
+
+void Widget::printMensaje(QString msn)
+{
+    ui->plainTextEdit->setPlainText(msn);
 }

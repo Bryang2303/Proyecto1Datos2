@@ -6,16 +6,37 @@
 #define MS2_MSERVER_H
 
 
-class mserver {
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <string.h>
+#include <string>
+#include <iostream>
+#include <pthread.h>
+#include <vector>
+#include <unistd.h>
+
+
+using namespace std;
+
+struct dataSocket{
+    int descriptor;
+    sockaddr_in info;
+};
+
+class mserver
+{
 public:
     mserver();
-    char buffer[256];
-    int newsockfd;
-    int sockfd;
-    int n;
-    void error(const char *msg);
-    void flow();
-
+    void run();
+    void setMensaje(const char *msn);
+private:
+    int descriptor;
+    sockaddr_in info;
+    bool crear_Socket();
+    bool ligar_kernel();
+    static void * controladorCliente(void *obj);
+    vector<int> clientes;
 };
 
 

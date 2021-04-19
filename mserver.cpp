@@ -1,64 +1,81 @@
-//
-// Created by bryang2303 on 12/4/21.
-//
 #include "mserver.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include "iostream"
-using namespace std;
 
-void mserver::error(const char *msg)
+mserver::mserver()
 {
-    perror(msg);
-    exit(0);
 }
-void mserver::flow() {
-    while(1)
-    {
-        bzero(this->buffer,256);
-        this->n = read(this->newsockfd,this->buffer,255);
-        if (this->n < 0) error("ERROR reading from socket");
-        printf("Client: %s\n",this->buffer);
-        bzero(this->buffer,256);
-        fgets(this->buffer,255,stdin);
-        this->n = write(this->newsockfd,this->buffer,strlen(this->buffer));
-        if (this->n < 0) error("ERROR writing to socket");
-        int i=strncmp("Bye" , this->buffer, 3);
-        if(i == 0)
-            break;
+
+
+bool mserver::crear_Socket()
+{
+    descriptor = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
+    if(descriptor < 0)
+        return false;
+    info.sin_family = AF_INET;
+    info.sin_addr.s_addr = INADDR_ANY;
+    info.sin_port = htons(4050);
+    memset(&info.sin_zero,0,sizeof(info.sin_zero));
+    return true;
+}
+
+bool mserver::ligar_kernel()
+{
+    if((bind(descriptor,(sockaddr *)&info,(socklen_t)sizeof(info))) < 0)
+        return false;
+
+    listen(descriptor,5);
+    return true;
+}
+
+
+void mserver::run()
+{
+    if(!crear_Socket())
+        throw string("Error al crear el socket");
+    if(!ligar_kernel())
+        throw string("Error al  ligar kernel");
+
+    while (true) {
+        cout << "Esperando nuevo cliente"<<endl;
+        dataSocket data;
+        socklen_t tam = sizeof(data.info);
+        data.descriptor = accept(descriptor,(sockaddr*)&data.info,&tam);
+        if(data.descriptor < 0)
+            cout << "Error al acceptar al cliente"<<endl;
+        else
+        {
+            clientes.push_back(data.descriptor);
+            pthread_t hilo;
+            pthread_create(&hilo,0,mserver::controladorCliente,(void *)&data);
+            pthread_detach(hilo);
+        }
     }
+    close(descriptor);
 }
-mserver::mserver() {
-    int portno;
-    socklen_t clilen;
-    struct sockaddr_in serv_addr, cli_addr;
 
-    this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (this->sockfd < 0)
-        error("ERROR opening socket");
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    portno = 8080;
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(portno);
-    if (bind(this->sockfd, (struct sockaddr *) &serv_addr,
-             sizeof(serv_addr)) < 0)
-        error("ERROR on binding");
-    listen(this->sockfd,5);
-    clilen = sizeof(cli_addr);
-    this->newsockfd = accept(this->sockfd,
-                       (struct sockaddr *) &cli_addr,
-                       &clilen);
-    if (this->newsockfd < 0)
-        error("ERROR on accept");
-    flow();
-    close(this->newsockfd);
-    close(this->sockfd);
 
+
+void * mserver::controladorCliente(void *obj)
+{
+    dataSocket *data = (dataSocket*)obj;
+    while (true) {
+        string mensaje;
+        while (1) {
+            char buffer[10] = {0};
+            int bytes = recv(data->descriptor,buffer,10,0);
+            mensaje.append(buffer,bytes);
+            if(bytes < 10)
+                break;
+        }
+        cout << mensaje << endl;
+    }
+
+    close(data->descriptor);
+    pthread_exit(NULL);
+}
+
+
+void mserver::setMensaje(const char *msn)
+{
+    for(unsigned int i = 0 ; i < clientes.size() ; i++)
+        cout << "bytes enviados "<< send(clientes[i],msn,strlen(msn),0);
 }

@@ -2,6 +2,9 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QTcpSocket>
+#include <QMessageBox>
+#include "socketcliente.h"
 
 namespace Ui {
 class Widget;
@@ -17,20 +20,19 @@ public:
 
     void Recon(QStringList codelines);
 
-private slots:
-    void on_pushButton_clicked();
+private:
+    Ui::Widget *ui;
+    SocketCliente *conexion;
 
-    void on_pushButton_2_clicked();
+private slots:
 
     void on_pushButton_3_clicked();
 
-
-    void on_pushButton_5_clicked();
-
     void on_pushButton_6_clicked();
 
-private:
-    Ui::Widget *ui;
+    void printMensaje(QString msn);
+    void sendMensaje();
+
 };
 
 #endif // WIDGET_H
