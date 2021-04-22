@@ -463,6 +463,11 @@
      <height>291</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
   </widget>
   <widget class="QPushButton" name="pushButton_6">
    <property name="geometry">

@@ -21,7 +21,8 @@ void * serverRun(void *)
 
 int main(int argc, char *argv[])
 {
-    char a;
+    char origen [] = "abcdefghi";
+    cout << origen << endl;
 
     int mode = 2;
     if (mode==2){

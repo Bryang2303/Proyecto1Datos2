@@ -17,7 +17,20 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
+    bool scope = false;
+    int contScope = 0;
+    QStringList variables;
+    QList<int> scopes = {0};
+    bool alreadyIs = false;
 
+
+    QStringList op = {"+","-","*","/"};
+    QList<QString> inS;
+    QList<QString> outS;
+
+    void IsOrNot(QString n, QString t);
+    QString searchInScope(QString n, QString t, QString scp);
+    QString Solve(int first, int second, int action);
     void Recon(QStringList codelines);
 
 private:
