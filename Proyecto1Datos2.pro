@@ -39,5 +39,5 @@ HEADERS += \
 FORMS += \
         widget.ui
 
-QMAKE_CXXFLAGS += -std=gnu++11
+QMAKE_CXXFLAGS += -std=gnu++14
 

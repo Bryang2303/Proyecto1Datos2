@@ -22,14 +22,19 @@ public:
     QStringList variables;
     QList<int> scopes = {0};
     bool alreadyIs = false;
+    //int opType = 0;
 
 
     QStringList op = {"+","-","*","/"};
     QList<QString> inS;
     QList<QString> outS;
 
+    //QString convert(auto);
     void IsOrNot(QString n, QString t);
+    auto Solve2(auto uno, auto dos, auto tres);
     QString searchInScope(QString n, QString t, QString scp);
+    QString searchInScope2(QString n, QString scp);
+    void setValue(QString n, auto v, QString t, QString scp);
     QString Solve(int first, int second, int action);
     void Recon(QStringList codelines);
 

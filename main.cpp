@@ -22,7 +22,16 @@ void * serverRun(void *)
 int main(int argc, char *argv[])
 {
     char origen [] = "abcdefghi";
-    cout << origen << endl;
+    //char origen = "abc";
+    //cout << origen+=origen2 << endl;
+    float ff = 2.5;
+    double aw = 2.3525;
+    int s = 2;
+    long q = 300000;
+    double h = 5;
+    QString sw = QString::number(h+aw);
+    string sw2 = sw.toUtf8().constData();
+    qDebug() << sw << endl;
 
     int mode = 2;
     if (mode==2){
