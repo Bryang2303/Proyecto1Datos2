@@ -28,13 +28,17 @@ SOURCES += \
         widget.cpp \
     client.cpp \
     mserver.cpp \
-    socketcliente.cpp
+    socketcliente.cpp \
+    json.cpp
 
 HEADERS += \
         widget.h \
     client.h \
     mserver.h \
-    socketcliente.h
+    socketcliente.h \
+    json.h
+OTHER_FILES += \
+    peticiones.json
 
 FORMS += \
         widget.ui

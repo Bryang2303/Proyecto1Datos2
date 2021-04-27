@@ -60,10 +60,10 @@ void * mserver::controladorCliente(void *obj)
     while (true) {
         string mensaje;
         while (1) {
-            char buffer[10] = {0};
-            int bytes = recv(data->descriptor,buffer,10,0);
+            char buffer[100] = {0};
+            int bytes = recv(data->descriptor,buffer,100,0);
             mensaje.append(buffer,bytes);
-            if(bytes < 10)
+            if(bytes < 100)
                 break;
         }
         cout << mensaje << endl;

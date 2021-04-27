@@ -23,6 +23,8 @@
 #include <typeinfo>
 #include <algorithm>
 
+
+
 using namespace std;
 
 Widget::Widget(QWidget *parent) :
@@ -40,6 +42,8 @@ Widget::Widget(QWidget *parent) :
 
     connect(conexion,SIGNAL(NewMensaje(QString)),SLOT(printMensaje(QString)));
     connect(ui->pushButton_8,SIGNAL(clicked()),SLOT(sendMensaje()));
+    //pLabel->setStyleSheet( "Qlabel { background-color : red; color : blue; }");
+    //ui->label_3->setStyleSheet("Qlabel { background-color : red; color : blue;  }");
 }
 
 Widget::~Widget()
@@ -87,7 +91,7 @@ auto Widget::Solve2(auto first, auto second, auto action){
         return s;
     }
 }
-
+// a , b , c
 void Widget::IsOrNot(QString n, QString t){
     for (int j = 0;j<this->variables.size();j++){
         QStringList variables2 = this->variables[j].split("|");
@@ -151,7 +155,7 @@ void Widget::Recon(QStringList codelines){
     //bool alreadyIs = 0;
     for (i=0;i<codelines.size();i++){
         //bool scope = false;
-
+        this->alreadyIs=0;
 
         string line = codelines[i].toUtf8().constData();
         //cout << line << "\n"; // Toda la linea
@@ -192,6 +196,7 @@ void Widget::Recon(QStringList codelines){
                             string valor = s;
                             ////////
                             QString value = QString::fromStdString(valor);
+                            this->alreadyIs=0;
                             IsOrNot(name,type);
 
                             if (this->alreadyIs==0){
@@ -228,6 +233,7 @@ void Widget::Recon(QStringList codelines){
 
 
                     } else if (atoi(lineDivided[3].c_str()) && atoi(lineDivided[5].c_str())){
+                        this->alreadyIs=0;
                         IsOrNot(name,type);
                         if (lineDivided[4]=="+" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),1) + "|" + scopeNum);
@@ -252,6 +258,7 @@ void Widget::Recon(QStringList codelines){
                         qDebug() << this->variables << endl;
                         ////////
                     } else if (atoi(lineDivided[5].c_str())){
+                        this->alreadyIs=0;
                         IsOrNot(name,type);
                         if (this->alreadyIs==0){
                             string nombre2 = lineDivided[3];
@@ -278,12 +285,12 @@ void Widget::Recon(QStringList codelines){
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
-                                throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
+                                throw "6Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
-                            throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
+                            throw "5Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
                     } else if (atoi(lineDivided[3].c_str())) {
                         IsOrNot(name,type);
@@ -317,7 +324,7 @@ void Widget::Recon(QStringList codelines){
                             qDebug() << this->variables << endl;
 
                         } else {
-                            throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
+                            throw "4Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
                     } else if (1){
@@ -352,12 +359,12 @@ void Widget::Recon(QStringList codelines){
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
-                                throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
+                                throw "3Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
-                            throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
+                            throw "2Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
                     } else {
@@ -379,7 +386,7 @@ void Widget::Recon(QStringList codelines){
                     this->variables.append(name + "|" + type + "|" + "0" + "|" + scopeNum);
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                 } else {
-                    cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
+                    cout << "1Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                 }
                 qDebug() << this->variables << endl;
                 ////////
@@ -1248,7 +1255,8 @@ void Widget::Recon(QStringList codelines){
                                     if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
                                         QString value2 = searchInScope(name2, type2, scopeNum);
                                         string value3 = value2.toUtf8().constData();
-                                        //cout << value3 << endl;
+                                        cout << value3 << endl;
+                                        cout << lineDivided[4] << endl;
                                         if (lineDivided[3]=="+"){
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),1).toUtf8().constData()),type,scopeNum);
                                         } else if (lineDivided[3]=="-"){
@@ -1707,4 +1715,10 @@ void Widget::sendMensaje()
 void Widget::printMensaje(QString msn)
 {
     ui->plainTextEdit->setPlainText(msn);
+}
+
+void Widget::on_pushButton_clicked()
+{
+    this->pos+=1;
+    cout << this->pos << endl;
 }

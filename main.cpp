@@ -3,6 +3,11 @@
 #include "client.h"
 #include "iostream"
 #include "mserver.h"
+#include <iomanip>
+#include <ctime>
+#include <sstream>
+#include <time.h>
+#include <json.h>
 using namespace std;
 
 mserver *server;
@@ -32,6 +37,16 @@ int main(int argc, char *argv[])
     QString sw = QString::number(h+aw);
     string sw2 = sw.toUtf8().constData();
     qDebug() << sw << endl;
+    Json J;
+    J.ParseJson(2);
+
+    char fecha[25];//ctime devuelve 26 caracteres pero tambien se podría usar un puntero de char
+    time_t current_time;
+    current_time=time(NULL);
+    ctime(&current_time);
+    strcpy(fecha, ctime(&current_time));
+    cout << fecha << endl;
+    //printf("%s", fecha);
 
     int mode = 2;
     if (mode==2){

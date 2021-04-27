@@ -22,6 +22,7 @@ public:
     QStringList variables;
     QList<int> scopes = {0};
     bool alreadyIs = false;
+    int pos = 0;
     //int opType = 0;
 
 
@@ -51,6 +52,7 @@ private slots:
     void printMensaje(QString msn);
     void sendMensaje();
 
+    void on_pushButton_clicked();
 };
 
 #endif // WIDGET_H
