@@ -1,0 +1,260 @@
+\hypertarget{class_widget}{}\doxysection{Widget Class Reference}
+\label{class_widget}\index{Widget@{Widget}}
+
+
+The \mbox{\hyperlink{class_widget}{Widget}} class La clase que maneja todo lo relacionado con la Interfaz Grafica, asi como las operaciones dentro de la misma.  
+
+
+
+
+{\ttfamily \#include $<$widget.\+h$>$}
+
+
+
+Inheritance diagram for Widget\+:
+% FIG 0
+
+
+Collaboration diagram for Widget\+:
+% FIG 1
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_widget_a29531c7f141e461322981b3b579d4590}\label{class_widget_a29531c7f141e461322981b3b579d4590}} 
+\mbox{\hyperlink{class_widget_a29531c7f141e461322981b3b579d4590}{Widget}} (Q\+Widget $\ast$parent=0)
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{class_widget}{Widget}} \+: El constructor de la interfaz. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_aec25a8056b2cc4b9bcf0354558837f7d}\label{class_widget_aec25a8056b2cc4b9bcf0354558837f7d}} 
+void \mbox{\hyperlink{class_widget_aec25a8056b2cc4b9bcf0354558837f7d}{date}} ()
+\begin{DoxyCompactList}\small\item\em date Para la obtencion de la fecha que se muestra en los Logs \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_widget_ab5869b4dd245c4177b375892aafd27fd}{log}} (Q\+String T, Q\+String msgL)
+\begin{DoxyCompactList}\small\item\em log Permite mostrar en pantalla los Logs \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_widget_a63de257a76bfd0ae3cf370f6c7fe899b}{Is\+Or\+Not}} (Q\+String n, Q\+String t)
+\begin{DoxyCompactList}\small\item\em Is\+Or\+Not Permite saber si la variable que se va a declarar, ya ha sido declarado antes o no. \end{DoxyCompactList}\item 
+auto \mbox{\hyperlink{class_widget_ac65388cb467ed503422719f0bd149026}{Solve2}} (auto uno, auto dos, auto tres)
+\begin{DoxyCompactList}\small\item\em Solve2 Permite retornar el resultado de tipo auto de una operacion especifica entre dos valores. \end{DoxyCompactList}\item 
+Q\+String \mbox{\hyperlink{class_widget_ab32b45b183f9e7130aa843dbd8edf45d}{search\+In\+Scope}} (Q\+String n, Q\+String t, Q\+String scp)
+\begin{DoxyCompactList}\small\item\em search\+In\+Scope Permite obtener el valor de una variable ya existente. Si no existe, retorna una negacion. \end{DoxyCompactList}\item 
+Q\+String \mbox{\hyperlink{class_widget_a8c7384205761e3fbb216491cf7c95b8f}{search\+In\+Scope2}} (Q\+String n, Q\+String scp)
+\begin{DoxyCompactList}\small\item\em search\+In\+Scope2 Permite obtener el tipo de una variable ya existente. Si no existe, retorna una negacion. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_widget_a612831c3359ed1ed384552fc4799a266}{set\+Value}} (Q\+String n, auto v, Q\+String t, Q\+String scp)
+\begin{DoxyCompactList}\small\item\em set\+Value Permite asignar un nuevo valor a una variable ya asignada con anterioridad \end{DoxyCompactList}\item 
+Q\+String \mbox{\hyperlink{class_widget_ab7cf52ef983e8cdf87abdd9dea0d92ec}{Solve}} (int first, int second, int action)
+\begin{DoxyCompactList}\small\item\em Solve Permite resolver una operacion especifica para numeros enteros unicamente. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_widget_a61eeb4ba99b9c9b6a2c35eb5aadf2525}{Recon}} (Q\+String\+List codelines, int run\+Kind)
+\begin{DoxyCompactList}\small\item\em Recon Permite reconocer cada linea de codigo introducida en el I\+DE de C!. La funcion avanza linea por linea, identificando cada ejecucion, cada asignacion de variable, cada reasignacion de valor, realizando cada operacion y en general cada instruccion. Lo puede realizar de manera en forma de Run o en forma de Debug. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_widget_a4e4bcf56d2ab62114bf2c00ef6d085ff}{send\+Msg}} (Q\+String n, Q\+String Jaction)
+\begin{DoxyCompactList}\small\item\em send\+Msg Se encarga del envio de mensajes al servidor, buscando los datos de una variable especifica para posteriormente armar el mismo mensaje como un conjunto de atributos de la variable. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_widget_aded085341beba13397069cac81d1e31b}\label{class_widget_aded085341beba13397069cac81d1e31b}} 
+bool \mbox{\hyperlink{class_widget_aded085341beba13397069cac81d1e31b}{scope}} = false
+\begin{DoxyCompactList}\small\item\em scope Permite diferenciar el scope global de otro \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_a966a57e91adb7197f4c30991fba6ceef}\label{class_widget_a966a57e91adb7197f4c30991fba6ceef}} 
+int \mbox{\hyperlink{class_widget_a966a57e91adb7197f4c30991fba6ceef}{cont\+Scope}} = 0
+\begin{DoxyCompactList}\small\item\em cont\+Scope Un contador de cada scope definido \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_afb8829eaed2994fb08514c958b4cbdca}\label{class_widget_afb8829eaed2994fb08514c958b4cbdca}} 
+Q\+String\+List \mbox{\hyperlink{class_widget_afb8829eaed2994fb08514c958b4cbdca}{variables}}
+\begin{DoxyCompactList}\small\item\em variables Lista de todas las variables asignadas, con su respectivo valor, tipo y scope en el que se encuentra \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_aacda822a3f73741af779a64ad60db7e1}\label{class_widget_aacda822a3f73741af779a64ad60db7e1}} 
+Q\+List$<$ int $>$ {\bfseries scopes} = \{0\}
+\item 
+\mbox{\Hypertarget{class_widget_aecf097f07e82c51e97a8830eb0b42580}\label{class_widget_aecf097f07e82c51e97a8830eb0b42580}} 
+bool \mbox{\hyperlink{class_widget_aecf097f07e82c51e97a8830eb0b42580}{already\+Is}} = false
+\begin{DoxyCompactList}\small\item\em already\+Is Permite saber si una variable existe o no \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_a1bd5d970224400e9256e693fe1551b39}\label{class_widget_a1bd5d970224400e9256e693fe1551b39}} 
+int \mbox{\hyperlink{class_widget_a1bd5d970224400e9256e693fe1551b39}{pos}} = 1
+\begin{DoxyCompactList}\small\item\em pos La posicion (linea de codigo) que se esta ejecutando \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_a471a3abc36147e2cb61ce32fa2369bc7}\label{class_widget_a471a3abc36147e2cb61ce32fa2369bc7}} 
+char \mbox{\hyperlink{class_widget_a471a3abc36147e2cb61ce32fa2369bc7}{fecha}} \mbox{[}25\mbox{]}
+\begin{DoxyCompactList}\small\item\em fecha Donde se almacena la fecha con su repectivo formato \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_aec6499fcfd1c87e2d2f733df6a9dd540}\label{class_widget_aec6499fcfd1c87e2d2f733df6a9dd540}} 
+time\+\_\+t \mbox{\hyperlink{class_widget_aec6499fcfd1c87e2d2f733df6a9dd540}{current\+\_\+time}}
+\begin{DoxyCompactList}\small\item\em current\+\_\+time La hora actual \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_a8277a4fdf637bf4057a1558e39e3879f}\label{class_widget_a8277a4fdf637bf4057a1558e39e3879f}} 
+\mbox{\hyperlink{class_json}{Json}} \mbox{\hyperlink{class_widget_a8277a4fdf637bf4057a1558e39e3879f}{J}}
+\begin{DoxyCompactList}\small\item\em J El json que se utiliza. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \mbox{\hyperlink{class_widget}{Widget}} class La clase que maneja todo lo relacionado con la Interfaz Grafica, asi como las operaciones dentro de la misma. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_widget_a63de257a76bfd0ae3cf370f6c7fe899b}\label{class_widget_a63de257a76bfd0ae3cf370f6c7fe899b}} 
+\index{Widget@{Widget}!IsOrNot@{IsOrNot}}
+\index{IsOrNot@{IsOrNot}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{IsOrNot()}{IsOrNot()}}
+{\footnotesize\ttfamily void Widget\+::\+Is\+Or\+Not (\begin{DoxyParamCaption}\item[{Q\+String}]{n,  }\item[{Q\+String}]{t }\end{DoxyParamCaption})}
+
+
+
+Is\+Or\+Not Permite saber si la variable que se va a declarar, ya ha sido declarado antes o no. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & Nombre de la variable a buscar \\
+\hline
+{\em t} & Tipo de la variable a buscar \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_widget_ab5869b4dd245c4177b375892aafd27fd}\label{class_widget_ab5869b4dd245c4177b375892aafd27fd}} 
+\index{Widget@{Widget}!log@{log}}
+\index{log@{log}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{log()}{log()}}
+{\footnotesize\ttfamily void Widget\+::log (\begin{DoxyParamCaption}\item[{Q\+String}]{T,  }\item[{Q\+String}]{msgL }\end{DoxyParamCaption})}
+
+
+
+log Permite mostrar en pantalla los Logs 
+
+
+\begin{DoxyParams}{Parameters}
+{\em T} & tipo de aviso \\
+\hline
+{\em msgL} & mensaje de aviso \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_widget_a61eeb4ba99b9c9b6a2c35eb5aadf2525}\label{class_widget_a61eeb4ba99b9c9b6a2c35eb5aadf2525}} 
+\index{Widget@{Widget}!Recon@{Recon}}
+\index{Recon@{Recon}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{Recon()}{Recon()}}
+{\footnotesize\ttfamily void Widget\+::\+Recon (\begin{DoxyParamCaption}\item[{Q\+String\+List}]{codelines,  }\item[{int}]{run\+Kind }\end{DoxyParamCaption})}
+
+
+
+Recon Permite reconocer cada linea de codigo introducida en el I\+DE de C!. La funcion avanza linea por linea, identificando cada ejecucion, cada asignacion de variable, cada reasignacion de valor, realizando cada operacion y en general cada instruccion. Lo puede realizar de manera en forma de Run o en forma de Debug. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em codelines} & La lista de las instrucciones, donde cada elemento de la misma es una linea de codigo. \\
+\hline
+{\em run\+Kind} & El tipo de ejecucion a realizar. 0. Un unico Run que ejecuta todo el codigo 1. Ejecucion linea por linea controlada porr un contador. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_widget_ab32b45b183f9e7130aa843dbd8edf45d}\label{class_widget_ab32b45b183f9e7130aa843dbd8edf45d}} 
+\index{Widget@{Widget}!searchInScope@{searchInScope}}
+\index{searchInScope@{searchInScope}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{searchInScope()}{searchInScope()}}
+{\footnotesize\ttfamily Q\+String Widget\+::search\+In\+Scope (\begin{DoxyParamCaption}\item[{Q\+String}]{n,  }\item[{Q\+String}]{t,  }\item[{Q\+String}]{scp }\end{DoxyParamCaption})}
+
+
+
+search\+In\+Scope Permite obtener el valor de una variable ya existente. Si no existe, retorna una negacion. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & Nombre de la variable a buscar \\
+\hline
+{\em t} & Tipo de la variable a buscar \\
+\hline
+{\em scp} & Scope en el que se encuentra la variable \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+El valor de la variable buscada, en formato Q\+String 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_widget_a8c7384205761e3fbb216491cf7c95b8f}\label{class_widget_a8c7384205761e3fbb216491cf7c95b8f}} 
+\index{Widget@{Widget}!searchInScope2@{searchInScope2}}
+\index{searchInScope2@{searchInScope2}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{searchInScope2()}{searchInScope2()}}
+{\footnotesize\ttfamily Q\+String Widget\+::search\+In\+Scope2 (\begin{DoxyParamCaption}\item[{Q\+String}]{n,  }\item[{Q\+String}]{scp }\end{DoxyParamCaption})}
+
+
+
+search\+In\+Scope2 Permite obtener el tipo de una variable ya existente. Si no existe, retorna una negacion. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & Nombre de la variable a buscar \\
+\hline
+{\em scp} & Scope en el que se encuentra la variable \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+El tipo de la variable buscada, en formato Q\+String 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_widget_a4e4bcf56d2ab62114bf2c00ef6d085ff}\label{class_widget_a4e4bcf56d2ab62114bf2c00ef6d085ff}} 
+\index{Widget@{Widget}!sendMsg@{sendMsg}}
+\index{sendMsg@{sendMsg}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{sendMsg()}{sendMsg()}}
+{\footnotesize\ttfamily void Widget\+::send\+Msg (\begin{DoxyParamCaption}\item[{Q\+String}]{n,  }\item[{Q\+String}]{Jaction }\end{DoxyParamCaption})}
+
+
+
+send\+Msg Se encarga del envio de mensajes al servidor, buscando los datos de una variable especifica para posteriormente armar el mismo mensaje como un conjunto de atributos de la variable. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & Nombre de la variable a buscar \\
+\hline
+{\em Jaction} & Tipo de solicitud que realiza el \mbox{\hyperlink{class_json}{Json}} \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_widget_a612831c3359ed1ed384552fc4799a266}\label{class_widget_a612831c3359ed1ed384552fc4799a266}} 
+\index{Widget@{Widget}!setValue@{setValue}}
+\index{setValue@{setValue}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{setValue()}{setValue()}}
+{\footnotesize\ttfamily void Widget\+::set\+Value (\begin{DoxyParamCaption}\item[{Q\+String}]{n,  }\item[{auto}]{v,  }\item[{Q\+String}]{t,  }\item[{Q\+String}]{scp }\end{DoxyParamCaption})}
+
+
+
+set\+Value Permite asignar un nuevo valor a una variable ya asignada con anterioridad 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n} & Nombre de la variable a la que se le reasigna el valor \\
+\hline
+{\em v} & Valor a asignar \\
+\hline
+{\em t} & Tipo de la variable \\
+\hline
+{\em scp} & Scope en el que se encuentra la variable \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_widget_ab7cf52ef983e8cdf87abdd9dea0d92ec}\label{class_widget_ab7cf52ef983e8cdf87abdd9dea0d92ec}} 
+\index{Widget@{Widget}!Solve@{Solve}}
+\index{Solve@{Solve}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{Solve()}{Solve()}}
+{\footnotesize\ttfamily Q\+String Widget\+::\+Solve (\begin{DoxyParamCaption}\item[{int}]{first,  }\item[{int}]{second,  }\item[{int}]{action }\end{DoxyParamCaption})}
+
+
+
+Solve Permite resolver una operacion especifica para numeros enteros unicamente. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em first} & Primer entero \\
+\hline
+{\em second} & Segundo entero \\
+\hline
+{\em action} & Operacion a realizar. 1.\+Suma, 2.\+Resta, 3.\+Multiplicacion, 4. Division \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+El resultado de la operacion, en tipo Q\+String 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_widget_ac65388cb467ed503422719f0bd149026}\label{class_widget_ac65388cb467ed503422719f0bd149026}} 
+\index{Widget@{Widget}!Solve2@{Solve2}}
+\index{Solve2@{Solve2}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{Solve2()}{Solve2()}}
+{\footnotesize\ttfamily auto Widget\+::\+Solve2 (\begin{DoxyParamCaption}\item[{auto}]{uno,  }\item[{auto}]{dos,  }\item[{auto}]{tres }\end{DoxyParamCaption})}
+
+
+
+Solve2 Permite retornar el resultado de tipo auto de una operacion especifica entre dos valores. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em uno} & Primer valor a operar \\
+\hline
+{\em dos} & Segundo valor a operar \\
+\hline
+{\em tres} & La operacion a realizar. 1.\+Suma, 2.\+Resta, 3.\+Multiplicacion, 4. Division \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/bryang2303/\+Proyecto1\+Datos2/widget.\+h\item 
+/home/bryang2303/\+Proyecto1\+Datos2/widget.\+cpp\end{DoxyCompactItemize}

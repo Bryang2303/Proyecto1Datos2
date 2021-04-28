@@ -6,7 +6,12 @@ class Json
 {
 
 public:
-    void ParseJson(int posicion);
+    /**
+     * @brief ParseJson
+     * @param posicion
+     * @return
+     */
+    QString ParseJson(int posicion);
     Json();
 };
 

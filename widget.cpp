@@ -1,7 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include "iostream"
-#include "client.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +22,7 @@
 #include <boost/algorithm/cxx11/any_of.hpp>
 #include <typeinfo>
 #include <algorithm>
-
+#include <json.h>
 
 
 using namespace std;
@@ -60,6 +60,22 @@ Widget::~Widget()
     //        cout << " S1 Contains an equalizer";
 }
 
+void Widget::log(QString T, QString msgL){
+    date();
+    string str{this->fecha};
+    string fecha2 = str.substr (0,str.length()-1);
+    cout << fecha2 << endl;
+    QString _date = QString::fromStdString(fecha2);
+    //qDebug() << _date << endl;
+    ui->plainTextEdit_3->appendPlainText(_date+" "+T+": "+msgL);
+}
+void Widget::date(){
+    this->current_time=time(NULL);
+    ctime(&this->current_time);
+    strcpy(this->fecha, ctime(&this->current_time));
+    cout << this->fecha << endl;
+
+}
 
 QString Widget::Solve(int first, int second, int action){
     if (action==1){
@@ -132,7 +148,7 @@ QString Widget::searchInScope2(QString n,QString scp){
     return "no";
 }
 void Widget::setValue(QString n,auto v, QString t, QString scp){
-    cout << v << " ahora si" << endl;
+    //cout << v << " ahora si" << endl;
     for (int j = 0;j<this->variables.size();j++){
         QStringList variables2 = this->variables[j].split("|");
         //qDebug() << n << " " << v << endl;
@@ -146,14 +162,34 @@ void Widget::setValue(QString n,auto v, QString t, QString scp){
     }
 }
 
+void Widget::sendMsg(QString n, QString Jaction){
+    for (int j = 0;j<this->variables.size();j++){
+        QStringList variables2 = this->variables[j].split("|");
+        //qDebug() << n << " " << v << endl;
+        //qDebug() << variables2[0] << variables2[1] << "\n";
+        if (variables2[0] == n){
+            QString CMsg = Jaction + "|" + variables2[1] + "|" + variables2[2] + "|" + n;
+            qDebug() << CMsg << endl;
+            conexion->setMensaje(CMsg.toUtf8().constData());
+        }
+    }
+}
 
 
-void Widget::Recon(QStringList codelines){
-    int i;
-    const char CaracteresIndeseados[] = { '[', ']', ';', '.' };
+void Widget::Recon(QStringList codelines, int runKind){
+    int i=0;
+    int limit;
+    if (runKind==0){
+        limit = codelines.size();
+
+    } else {
+        limit = this->pos;
+        i = limit-1;
+    }
+
     //this->variables.clear();
     //bool alreadyIs = 0;
-    for (i=0;i<codelines.size();i++){
+    for (i;i<limit;i++){
         //bool scope = false;
         this->alreadyIs=0;
 
@@ -163,8 +199,34 @@ void Widget::Recon(QStringList codelines){
         boost::split(lineDivided, line, boost::is_any_of(" "));
 
         string last = lineDivided[lineDivided.size()-1];
+        if (lineDivided[0]=="cout" && lineDivided[1]=="<<" && lineDivided[3]=="<<"){
+            if ( lineDivided[4]=="\n;" || lineDivided[4]=="endl;" ){
+                string nombre = lineDivided[2];
+                QString name = QString::fromStdString(nombre);
+                QString scopeNum = QString::number(this->contScope);
+                IsOrNot(name,name);
+                if (this->alreadyIs==1){
+                    QString a = searchInScope(name,name,scopeNum);
+                    ui->plainTextEdit_4->appendPlainText(" > "+a);
+                } else{
+                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                }
+            } else {
+                log("[ERROR]","Error en la asignacion de valor a una variable en linea "+QString::number(i));
+            }
+        } else if (lineDivided[0]=="print" && lineDivided[1]=="(" && lineDivided[3]==")"){
+            string nombre = lineDivided[2];
+            QString name = QString::fromStdString(nombre);
+            QString scopeNum = QString::number(this->contScope);
+            IsOrNot(name,name);
+            if (this->alreadyIs==1){
+                QString a = searchInScope(name,name,scopeNum);
+                ui->plainTextEdit_4->appendPlainText(" > "+a);
+            } else{
+                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+            }
 
-        if(lineDivided[0]=="{") {
+        } else if(lineDivided[0]=="{") {
             this->scope = true;
             this->scopes.append(this->scopes[this->scopes.size()-1]+1);
             qDebug() << this->scopes;
@@ -202,8 +264,12 @@ void Widget::Recon(QStringList codelines){
                             if (this->alreadyIs==0){
                                 this->variables.append(name + "|" + type + "|" + value + "|" + scopeNum);
                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
+                                log("[INFO]","Variable " +name+ " de tipo " + type + " asignada con un valor de " + value);
+
+                                sendMsg(name,this->J.ParseJson(0));
                             } else {
                                 alreadyIs = 1;
+                                log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                             }
 
@@ -222,8 +288,12 @@ void Widget::Recon(QStringList codelines){
                                     string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
 
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),0,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),0,1).toUtf8().constData() << endl;
+                                    sendMsg(name,this->J.ParseJson(0));
                                 } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                                 }
                                 qDebug() << this->variables << endl;
@@ -237,22 +307,27 @@ void Widget::Recon(QStringList codelines){
                         IsOrNot(name,type);
                         if (lineDivided[4]=="+" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),1) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),1).toUtf8().constData() << endl;
-
+                            sendMsg(name,this->J.ParseJson(0));
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),2) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),2).toUtf8().constData() << endl;
-
+                            sendMsg(name,this->J.ParseJson(0));
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),3) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),3).toUtf8().constData() << endl;
-
+                            sendMsg(name,this->J.ParseJson(0));
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),4) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),4).toUtf8().constData() << endl;
-
+                            sendMsg(name,this->J.ParseJson(0));
                         } else {
                             alreadyIs = 1;
+                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                         }
                         qDebug() << this->variables << endl;
@@ -270,27 +345,39 @@ void Widget::Recon(QStringList codelines){
                                 string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
-                                throw "6Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
-                            throw "5Variable ya existente. Error en la asignacion de valor a una variable en linea ";
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                            throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
                     } else if (atoi(lineDivided[3].c_str())) {
                         IsOrNot(name,type);
@@ -304,27 +391,38 @@ void Widget::Recon(QStringList codelines){
                                 string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),4) + "|" + scopeNum);
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
-                            throw "4Variable ya existente. Error en la asignacion de valor a una variable en linea ";
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                            throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
                     } else if (1){
@@ -344,30 +442,42 @@ void Widget::Recon(QStringList codelines){
                                 cout << value2 << " " << value3 << endl;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(value3.c_str()),1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(value3.c_str()),2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(value3.c_str()),3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(value3.c_str()),4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
-                                throw "3Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
-                            throw "2Variable ya existente. Error en la asignacion de valor a una variable en linea ";
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                            throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
                     } else {
+                        log("[ERROR]","Error en la asignacion de valor a una variable en linea. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                         throw "Error en la asignacion de valor a una variable en linea ";
                     }
 
@@ -384,9 +494,12 @@ void Widget::Recon(QStringList codelines){
                 }
                 if (this->alreadyIs==0){
                     this->variables.append(name + "|" + type + "|" + "0" + "|" + scopeNum);
+                    log("[INFO]","Variable " +name+ " de tipo " + type + " definida sin valor");
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
+                    sendMsg(name,this->J.ParseJson(0));
                 } else {
-                    cout << "1Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
+                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                    cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                 }
                 qDebug() << this->variables << endl;
                 ////////
@@ -419,9 +532,12 @@ void Widget::Recon(QStringList codelines){
 
                             if (this->alreadyIs==0){
                                 this->variables.append(name + "|" + type + "|" + value + "|" + scopeNum);
+                                log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                sendMsg(name,this->J.ParseJson(0));
                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                             } else {
                                 alreadyIs = 1;
+                                log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                             }
 
@@ -440,8 +556,11 @@ void Widget::Recon(QStringList codelines){
                                     string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
                                     istringstream(value2) >> d;
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,0,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,0,1).toUtf8().constData() << endl;
                                 } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                                 }
                                 qDebug() << this->variables << endl;
@@ -455,22 +574,30 @@ void Widget::Recon(QStringList codelines){
                         istringstream(lineDivided[5]) >> d2;
                         if (lineDivided[4]=="+" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(d,d2,1) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,1).toUtf8().constData() << endl;
-
+                            sendMsg(name,this->J.ParseJson(0));
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(d,d2,2) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,2).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(d,d2,3) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,3).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(d,d2,4) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,4).toUtf8().constData() << endl;
 
                         } else {
                             alreadyIs = 1;
+                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                         }
                         qDebug() << this->variables << endl;
@@ -490,26 +617,37 @@ void Widget::Recon(QStringList codelines){
                                 istringstream(value2) >> d2;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d2,d,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d2,d,2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d2,d,3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d2,d,4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
                     } else if (istringstream(lineDivided[3]) >> d) {
@@ -527,26 +665,37 @@ void Widget::Recon(QStringList codelines){
                                 istringstream(value2) >> d2;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
@@ -570,29 +719,41 @@ void Widget::Recon(QStringList codelines){
                                 cout << value2 << " " << value3 << endl;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
                     } else {
+                        log("[ERROR]","Error en la asignacion de valor a una variable en linea. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                         throw "Error en la asignacion de valor a una variable en linea ";
                     }
 
@@ -604,8 +765,11 @@ void Widget::Recon(QStringList codelines){
                 IsOrNot(name,type);
                 if (this->alreadyIs==0){
                     this->variables.append(name + "|" + type + "|" + "0" + "|" + scopeNum);
+                    log("[INFO]","Variable " +name+ " de tipo " + type + " definida sin valor");
+                    sendMsg(name,this->J.ParseJson(0));
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                 } else {
+                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                 }
                 qDebug() << this->variables << endl;
@@ -632,16 +796,19 @@ void Widget::Recon(QStringList codelines){
                         cout << "CASO 1" << endl;
                         if (istringstream(lineDivided[3].substr (0,lineDivided[3].length()-1)) >> f && lineDivided[3][lineDivided[3].size()-1]=='f'){
 
-                            string valor = last.substr (0,last.length()-1);;
+                            string valor = last.substr (0,last.length()-1);
                             ////////
                             QString value = QString::fromStdString(valor);
                             IsOrNot(name,type);
 
                             if (this->alreadyIs==0){
                                 this->variables.append(name + "|" + type + "|" + value + "|" + scopeNum);
+                                log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                sendMsg(name,this->J.ParseJson(0));
                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                             } else {
                                 alreadyIs = 1;
+                                log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                             }
 
@@ -660,8 +827,11 @@ void Widget::Recon(QStringList codelines){
                                     string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
                                     istringstream(value2) >> f;
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,0,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,0,1).toUtf8().constData() << endl;
                                 } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                                 }
                                 qDebug() << this->variables << endl;
@@ -674,22 +844,31 @@ void Widget::Recon(QStringList codelines){
                         istringstream(lineDivided[5].substr (0,lineDivided[5].length()-1)) >> f2;
                         if (lineDivided[4]=="+" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(f,f2,1) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,1).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(f,f2,2) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,2).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(f,f2,3) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,3).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(f,f2,4) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,4).toUtf8().constData() << endl;
 
                         } else {
                             alreadyIs = 1;
+                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                         }
                         qDebug() << this->variables << endl;
@@ -710,26 +889,37 @@ void Widget::Recon(QStringList codelines){
                                 istringstream(value2) >> f2;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f2,f,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f2,f,2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f2,f,3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f2,f,4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
@@ -749,26 +939,37 @@ void Widget::Recon(QStringList codelines){
                                 istringstream(value2) >> f2;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
@@ -792,30 +993,42 @@ void Widget::Recon(QStringList codelines){
                                 cout << value2 << " " << value3 << endl;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
                     } else {
+                        log("[ERROR]","Error en la asignacion de valor a una variable en linea. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                         throw "Error en la asignacion de valor a una variable en linea ";
                     }
 
@@ -827,8 +1040,11 @@ void Widget::Recon(QStringList codelines){
                 IsOrNot(name,type);
                 if (this->alreadyIs==0){
                     this->variables.append(name + "|" + type + "|" + "0" + "|" + scopeNum);
+                    log("[INFO]","Variable " +name+ " de tipo " + type + " definida sin valor asignado");
+                    sendMsg(name,this->J.ParseJson(0));
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                 } else {
+                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                 }
                 qDebug() << this->variables << endl;
@@ -865,9 +1081,12 @@ void Widget::Recon(QStringList codelines){
 
                             if (this->alreadyIs==0){
                                 this->variables.append(name + "|" + type + "|" + value + "|" + scopeNum);
+                                log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                sendMsg(name,this->J.ParseJson(0));
                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                             } else {
                                 alreadyIs = 1;
+                                log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                             }
 
@@ -887,8 +1106,11 @@ void Widget::Recon(QStringList codelines){
                                     string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
 
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),0,1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),0,1).toUtf8().constData() << endl;
                                 } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                                 }
                                 qDebug() << this->variables << endl;
@@ -900,22 +1122,31 @@ void Widget::Recon(QStringList codelines){
                         IsOrNot(name,type);
                         if (lineDivided[4]=="+" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),1) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),1).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),2) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),2).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),3) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),3).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),4) + "|" + scopeNum);
+                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                            sendMsg(name,this->J.ParseJson(0));
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),4).toUtf8().constData() << endl;
 
                         } else {
                             alreadyIs = 1;
+                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                         }
                         qDebug() << this->variables << endl;
@@ -932,26 +1163,37 @@ void Widget::Recon(QStringList codelines){
                                 string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
@@ -967,26 +1209,37 @@ void Widget::Recon(QStringList codelines){
                                 string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
@@ -1007,30 +1260,42 @@ void Widget::Recon(QStringList codelines){
                                 cout << value2 << " " << value3 << endl;
                                 if (lineDivided[4]=="+" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(value3.c_str()),1) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(value3.c_str()),2) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(value3.c_str()),3) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(value3.c_str()),4) + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Error en la asignacion de valor a una variable en linea. Operador desconocido ";
                                 }
                             } else {
+                                log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                             }
                             qDebug() << this->variables << endl;
 
                         } else {
+                            log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Variable ya existente. Error en la asignacion de valor a una variable en linea ";
                         }
 
                     } else {
+                        log("[ERROR]","Error en la asignacion de valor a una variable en linea. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                         throw "Error en la asignacion de valor a una variable en linea ";
                     }
 
@@ -1043,8 +1308,11 @@ void Widget::Recon(QStringList codelines){
                 IsOrNot(name,type);
                 if (this->alreadyIs==0){
                     this->variables.append(name + "|" + type + "|" + "0" + "|" + scopeNum);
+                    log("[INFO]","Variable " +name+ " de tipo " + type + " definida sin valor asignado");
+                    sendMsg(name,this->J.ParseJson(0));
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                 } else {
+                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                 }
                 qDebug() << this->variables << endl;
@@ -1079,13 +1347,17 @@ void Widget::Recon(QStringList codelines){
                                     string valor = lineDivided[4].substr (1,lineDivided[4].length()-2);
                                     QString value = QString::fromStdString(valor);
                                     this->variables.append(name + "|" + type + "|" + value + "|" + scopeNum);
+                                    log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                    sendMsg(name,this->J.ParseJson(0));
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                                 } else {
+                                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                                 }
                                 qDebug() << this->variables << endl;
                                 ////////
                              } else {
+                                log("[ERROR]","Error en la asignacion de valor a una variable en linea. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                 throw "Error en la asignacion de valor a una variable en linea ";
                              }
                         } else if(atoi(lineDivided[2].substr (1,lineDivided[2].size()-1).c_str()) && istringstream(espacio2) >> sp){
@@ -1102,20 +1374,26 @@ void Widget::Recon(QStringList codelines){
                                         cout << sp << " tadaaa " << endl;
                                         if (value2.size()<=sp){
                                             this->variables.append(name + "|" + type + "|" + value3 + "|" + scopeNum);
+                                            log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
+                                            sendMsg(name,this->J.ParseJson(0));
                                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << value3.toUtf8().constData() << endl;
                                         } else {
+                                            log("[ERROR]","Dimension de la variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             throw "Dimension de la variable incompatible. Error en la asignacion de valor a una variable en linea ";
                                         }
                                     } else {
+                                        log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                                     }
                                     qDebug() << this->variables << endl;
 
                                 } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
                                 }
 
                         } else {
+                            log("[ERROR]","Error en la asignacion de valor a una variable en linea "+QString::number(i));
                             throw "Error en la asignacion de valor a una variable en linea ";
                         }
 
@@ -1129,8 +1407,11 @@ void Widget::Recon(QStringList codelines){
                 IsOrNot(name,type);
                 if (alreadyIs==0){
                     this->variables.append(name + "|" + type + "|" + "0" + "|" + scopeNum);
+                    log("[INFO]","Variable " +name+ " de tipo " + type + " definida sin valor asignado");
+                    sendMsg(name,this->J.ParseJson(0));
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                 } else {
+                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                 }
                 qDebug() << this->variables << endl;
@@ -1159,6 +1440,7 @@ void Widget::Recon(QStringList codelines){
                             if (atoi(lineDivided[2].c_str())){
                                 cout << "a ver " << atoi(lineDivided[2].c_str()) << endl;
                                 setValue(name,atoi(lineDivided[2].c_str()),type1,scopeNum);
+                                sendMsg(name,this->J.ParseJson(1));
                             } else {
                                 string nombre2 = lineDivided[2];
                                 QString name2 = QString::fromStdString(nombre2);
@@ -1168,12 +1450,16 @@ void Widget::Recon(QStringList codelines){
                                     QString type2 = QString::fromStdString(tipo);
                                     if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
                                         string value2 = searchInScope(name2,type1,scopeNum).toUtf8().constData();
+                                        log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,atoi(value2.c_str()),type1,scopeNum);
+                                        sendMsg(name,this->J.ParseJson(1));
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
 
                                 } else {
+                                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                                 }
                             }
@@ -1181,6 +1467,7 @@ void Widget::Recon(QStringList codelines){
                             if (atol(lineDivided[2].c_str())){
                                 cout << "a ver " << atoi(lineDivided[2].c_str()) << endl;
                                 setValue(name,atol(lineDivided[2].c_str()),type4,scopeNum);
+                                sendMsg(name,this->J.ParseJson(1));
                             } else {
                                 string nombre2 = lineDivided[2];
                                 QString name2 = QString::fromStdString(nombre2);
@@ -1190,12 +1477,16 @@ void Widget::Recon(QStringList codelines){
                                     QString type2 = QString::fromStdString(tipo);
                                     if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
                                         string value2 = searchInScope(name2,type4,scopeNum).toUtf8().constData();
+                                        log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,atol(value2.c_str()),type4,scopeNum);
+                                        sendMsg(name,this->J.ParseJson(1));
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
 
                                 } else {
+                                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                                 }
                             }
@@ -1206,6 +1497,7 @@ void Widget::Recon(QStringList codelines){
                             if (istringstream(lineDivided[2]) >> d){
                                 cout << "a ver " << d << endl;
                                 setValue(name,d,type4,scopeNum);
+                                sendMsg(name,this->J.ParseJson(1));
                             } else {
                                 //QString value = QString::fromStdString(valor)
                                 string nombre2 = lineDivided[2];
@@ -1217,12 +1509,16 @@ void Widget::Recon(QStringList codelines){
                                     if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
                                         string value2 = searchInScope(name2,type,scopeNum).toUtf8().constData();
                                         istringstream(value2) >> d2;
+                                        log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,d2,type,scopeNum);
+                                        sendMsg(name,this->J.ParseJson(1));
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
 
                                 } else {
+                                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                                 }
                             }
@@ -1234,14 +1530,23 @@ void Widget::Recon(QStringList codelines){
                             if (atoi(lineDivided[2].c_str()) && atoi(lineDivided[4].c_str())){
                                 //cout << "a ver " << atoi(lineDivided[2].c_str()) << endl;
                                 if (lineDivided[3]=="+"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),1).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else if (lineDivided[3]=="-"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),2).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else if (lineDivided[3]=="*"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),3).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else if (lineDivided[3]=="/"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),4).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else {
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Error en la asignacion de variable" << endl;
                                 }
                             } else if (atoi(lineDivided[4].c_str())){
@@ -1258,21 +1563,31 @@ void Widget::Recon(QStringList codelines){
                                         cout << value3 << endl;
                                         cout << lineDivided[4] << endl;
                                         if (lineDivided[3]=="+"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),1).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),2).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),3).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),4).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
                                         }
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
                                 } else {
-                                    cout << "Error en a=la asignacion de la variable " << endl;
+                                    cout << "Error en la asignacion de la variable " << endl;
                                 }
                             } else if(atoi(lineDivided[2].c_str())){
                                 string nombre2 = lineDivided[4];
@@ -1287,147 +1602,31 @@ void Widget::Recon(QStringList codelines){
                                         string value3 = value2.toUtf8().constData();
                                         //cout << value3 << endl;
                                         if (lineDivided[3]=="+"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),1).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),2).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),3).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),4).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
                                         }
                                     } else {
-                                        cout << "Tipo de variable incompatible" << endl;
-                                    }
-                                } else {
-                                    cout << "Error en a=la asignacion de la variable " << endl;
-                                }
-                            } else if(1){
-                                string nombre2 = lineDivided[2];
-                                QString name2 = QString::fromStdString(nombre2);
-                                string nombre3 = lineDivided[4];
-                                QString name3 = QString::fromStdString(nombre3);
-                                IsOrNot(name2,name);
-                                IsOrNot(name3,name);
-                                if (alreadyIs==1){
-                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
-                                    QString type2 = QString::fromStdString(tipo);
-                                    string tipo3 = searchInScope2(name3,scopeNum).toUtf8().constData();
-                                    QString type3 = QString::fromStdString(tipo);
-                                    //cout << tipo2 << endl;
-                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
-                                        QString value2 = searchInScope(name2, type2, scopeNum);
-                                        string value3 = value2.toUtf8().constData();
-                                        QString value4 = searchInScope(name3, type3, scopeNum);
-                                        string value5 = value4.toUtf8().constData();
-                                        cout << value3 << " yyyy " << value5 << endl;
-                                        if (lineDivided[3]=="+"){
-                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),1).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="-"){
-                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),2).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="*"){
-                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),3).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="/"){
-                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),4).toUtf8().constData()),type,scopeNum);
-                                        } else {
-                                            cout << "Error en la asignacion de variable" << endl;
-                                        }
-                                    } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
                                 } else {
                                     cout << "Error en la asignacion de la variable " << endl;
-                                }////////
-                            } else {
-                                string nombre2 = lineDivided[2];
-                                QString name2 = QString::fromStdString(nombre2);
-                                IsOrNot(name2,name);
-                                if (alreadyIs==1){
-                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
-                                    QString type2 = QString::fromStdString(tipo);
-                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
-                                        string value2 = searchInScope(name2,type1,scopeNum).toUtf8().constData();
-                                        setValue(name,1,type1,scopeNum);
-                                    } else {
-                                        cout << "Tipo de variable incompatible" << endl;
-                                    }
-
-                                } else {
-                                    cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
-                                }
-                            }
-                        } else if (type == type4){
-                            if (atol(lineDivided[2].c_str()) && atol(lineDivided[4].c_str())){
-                                //cout << "a ver " << atoi(lineDivided[2].c_str()) << endl;
-                                if (lineDivided[3]=="+"){
-                                    setValue(name,atol(Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),1).toUtf8().constData()),type1,scopeNum);
-                                } else if (lineDivided[3]=="-"){
-                                    setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),2).toUtf8().constData()),type1,scopeNum);
-                                } else if (lineDivided[3]=="*"){
-                                    setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),3).toUtf8().constData()),type1,scopeNum);
-                                } else if (lineDivided[3]=="/"){
-                                    setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),4).toUtf8().constData()),type1,scopeNum);
-                                } else {
-                                    cout << "Error en la asignacion de variable" << endl;
-                                }
-                            } else if (atol(lineDivided[4].c_str())){
-                                string nombre2 = lineDivided[2];
-                                QString name2 = QString::fromStdString(nombre2);
-                                IsOrNot(name2,name);
-                                if (alreadyIs==1){
-                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
-                                    QString type2 = QString::fromStdString(tipo);
-                                    //cout << tipo2 << endl;
-                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
-                                        QString value2 = searchInScope(name2, type2, scopeNum);
-                                        string value3 = value2.toUtf8().constData();
-                                        //cout << value3 << endl;
-                                        if (lineDivided[3]=="+"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),1).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="-"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),2).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="*"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),3).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="/"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),4).toUtf8().constData()),type,scopeNum);
-                                        } else {
-                                            cout << "Error en la asignacion de variable" << endl;
-                                        }
-                                    } else {
-                                        cout << "Tipo de variable incompatible" << endl;
-                                    }
-                                } else {
-                                    cout << "Error en a=la asignacion de la variable " << endl;
-                                }
-                            } else if(atol(lineDivided[2].c_str())){
-                                string nombre2 = lineDivided[4];
-                                QString name2 = QString::fromStdString(nombre2);
-                                IsOrNot(name2,name);
-                                if (alreadyIs==1){
-                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
-                                    QString type2 = QString::fromStdString(tipo);
-                                    //cout << tipo2 << endl;
-                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
-                                        QString value2 = searchInScope(name2, type2, scopeNum);
-                                        string value3 = value2.toUtf8().constData();
-                                        //cout << value3 << endl;
-                                        if (lineDivided[3]=="+"){
-                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),1).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="-"){
-                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),2).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="*"){
-                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),3).toUtf8().constData()),type,scopeNum);
-                                        } else if (lineDivided[3]=="/"){
-                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),4).toUtf8().constData()),type,scopeNum);
-                                        } else {
-                                            cout << "Error en la asignacion de variable" << endl;
-                                        }
-                                    } else {
-                                        cout << "Tipo de variable incompatible" << endl;
-                                    }
-                                } else {
-                                    cout << "Error en a=la asignacion de la variable " << endl;
                                 }
                             } else if(1){
                                 string nombre2 = lineDivided[2];
@@ -1449,20 +1648,31 @@ void Widget::Recon(QStringList codelines){
                                         string value5 = value4.toUtf8().constData();
                                         //cout << value3 << " yyyy " << value5 << endl;
                                         if (lineDivided[3]=="+"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),1).toUtf8().constData()),type,scopeNum);
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),1).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),2).toUtf8().constData()),type,scopeNum);
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),2).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),3).toUtf8().constData()),type,scopeNum);
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),3).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
-                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),4).toUtf8().constData()),type,scopeNum);
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),4).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
                                         }
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
                                 } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Error en la asignacion de la variable " << endl;
                                 }////////
                             } else {
@@ -1474,12 +1684,188 @@ void Widget::Recon(QStringList codelines){
                                     QString type2 = QString::fromStdString(tipo);
                                     if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
                                         string value2 = searchInScope(name2,type1,scopeNum).toUtf8().constData();
+                                        log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,1,type1,scopeNum);
+                                        sendMsg(name,this->J.ParseJson(1));
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
 
                                 } else {
+                                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
+                                }
+                            }
+                        } else if (type == type4){
+                            if (atol(lineDivided[2].c_str()) && atol(lineDivided[4].c_str())){
+                                //cout << "a ver " << atoi(lineDivided[2].c_str()) << endl;
+                                if (lineDivided[3]=="+"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                    setValue(name,atol(Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),1).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
+                                } else if (lineDivided[3]=="-"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                    setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),2).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
+                                } else if (lineDivided[3]=="*"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                    setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),3).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
+                                } else if (lineDivided[3]=="/"){
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                    setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),4).toUtf8().constData()),type1,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
+                                } else {
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    cout << "Error en la asignacion de variable" << endl;
+                                }
+                            } else if (atol(lineDivided[4].c_str())){
+                                string nombre2 = lineDivided[2];
+                                QString name2 = QString::fromStdString(nombre2);
+                                IsOrNot(name2,name);
+                                if (alreadyIs==1){
+                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
+                                    QString type2 = QString::fromStdString(tipo);
+                                    //cout << tipo2 << endl;
+                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
+                                        QString value2 = searchInScope(name2, type2, scopeNum);
+                                        string value3 = value2.toUtf8().constData();
+                                        //cout << value3 << endl;
+                                        if (lineDivided[3]=="+"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),1).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="-"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),2).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="*"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),3).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="/"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),4).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                            cout << "Error en la asignacion de variable" << endl;
+                                        }
+                                    } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                        cout << "Tipo de variable incompatible" << endl;
+                                    }
+                                } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    cout << "Error en la asignacion de la variable " << endl;
+                                }
+                            } else if(atol(lineDivided[2].c_str())){
+                                string nombre2 = lineDivided[4];
+                                QString name2 = QString::fromStdString(nombre2);
+                                IsOrNot(name2,name);
+                                if (alreadyIs==1){
+                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
+                                    QString type2 = QString::fromStdString(tipo);
+                                    //cout << tipo2 << endl;
+                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
+                                        QString value2 = searchInScope(name2, type2, scopeNum);
+                                        string value3 = value2.toUtf8().constData();
+                                        //cout << value3 << endl;
+                                        if (lineDivided[3]=="+"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),1).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="-"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),2).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="*"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),3).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="/"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),4).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                            cout << "Error en la asignacion de variable" << endl;
+                                        }
+                                    } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                        cout << "Tipo de variable incompatible" << endl;
+                                    }
+                                } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    cout << "Error en la asignacion de la variable " << endl;
+                                }
+                            } else if(1){
+                                string nombre2 = lineDivided[2];
+                                QString name2 = QString::fromStdString(nombre2);
+                                string nombre3 = lineDivided[4];
+                                QString name3 = QString::fromStdString(nombre3);
+                                IsOrNot(name2,name);
+                                IsOrNot(name3,name);
+                                if (alreadyIs==1){
+                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
+                                    QString type2 = QString::fromStdString(tipo);
+                                    string tipo3 = searchInScope2(name3,scopeNum).toUtf8().constData();
+                                    QString type3 = QString::fromStdString(tipo);
+                                    //cout << tipo2 << endl;
+                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
+                                        QString value2 = searchInScope(name2, type2, scopeNum);
+                                        string value3 = value2.toUtf8().constData();
+                                        QString value4 = searchInScope(name3, type3, scopeNum);
+                                        string value5 = value4.toUtf8().constData();
+                                        //cout << value3 << " yyyy " << value5 << endl;
+                                        if (lineDivided[3]=="+"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),1).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="-"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),2).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="*"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),3).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else if (lineDivided[3]=="/"){
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                            setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),4).toUtf8().constData()),type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
+                                        } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                            cout << "Error en la asignacion de variable" << endl;
+                                        }
+                                    } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                        cout << "Tipo de variable incompatible" << endl;
+                                    }
+                                } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    cout << "Error en la asignacion de la variable " << endl;
+                                }////////
+                            } else {
+                                string nombre2 = lineDivided[2];
+                                QString name2 = QString::fromStdString(nombre2);
+                                IsOrNot(name2,name);
+                                if (alreadyIs==1){
+                                    string tipo2 = searchInScope2(name2,scopeNum).toUtf8().constData();
+                                    QString type2 = QString::fromStdString(tipo);
+                                    if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
+                                        string value2 = searchInScope(name2,type1,scopeNum).toUtf8().constData();
+                                        log("[INFO]","Variable " +name+ " ha cambiado su valor");
+                                        setValue(name,1,type1,scopeNum);
+                                        sendMsg(name,this->J.ParseJson(1));
+                                    } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                        cout << "Tipo de variable incompatible" << endl;
+                                    }
+
+                                } else {
+                                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                                 }
                             }
@@ -1491,17 +1877,26 @@ void Widget::Recon(QStringList codelines){
                                 if (lineDivided[3]=="+"){
                                     //cout << Solve2(d,d2,1).toUtf8().constData() << endl;
                                     istringstream(Solve2(d,d2,1).toUtf8().constData()) >> d;
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else if (lineDivided[3]=="-"){
                                     istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else if (lineDivided[3]=="*"){
                                     istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else if (lineDivided[3]=="/"){
                                     istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
+                                    log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
+                                    sendMsg(name,this->J.ParseJson(1));
                                 } else {
+                                    log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Error en la asignacion de variable" << endl;
                                 }
                             } else if (istringstream (lineDivided[4]) >> d){
@@ -1520,24 +1915,35 @@ void Widget::Recon(QStringList codelines){
                                         //cout << value3 << endl;
                                         if (lineDivided[3]=="+"){
                                             istringstream(Solve2(d,d2,1).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
                                             istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
                                             istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
                                             istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
                                         }
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
                                 } else {
-                                    cout << "Error en a=la asignacion de la variable " << endl;
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    cout << "Error en la asignacion de la variable " << endl;
                                 }
                             } else if(istringstream (lineDivided[2]) >> d){
                                 string nombre2 = lineDivided[4];
@@ -1555,24 +1961,35 @@ void Widget::Recon(QStringList codelines){
                                         //cout << value3 << endl;
                                         if (lineDivided[3]=="+"){
                                             istringstream(Solve2(d,d2,1).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
                                             istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
                                             istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
                                             istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
                                         }
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
                                 } else {
-                                    cout << "Error en a=la asignacion de la variable " << endl;
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
+                                    cout << "Error en la asignacion de la variable " << endl;
                                 }
                             } else if(1){
                                 string nombre2 = lineDivided[2];
@@ -1598,23 +2015,34 @@ void Widget::Recon(QStringList codelines){
 
                                         if (lineDivided[3]=="+"){
                                             istringstream(Solve2(d,d2,1).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
                                             istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
                                             istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
                                             istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
+                                            log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            sendMsg(name,this->J.ParseJson(1));
                                         } else {
+                                            log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
                                         }
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
                                 } else {
+                                    log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Error en la asignacion de la variable " << endl;
                                 }////////
                             } else {
@@ -1626,12 +2054,16 @@ void Widget::Recon(QStringList codelines){
                                     QString type2 = QString::fromStdString(tipo);
                                     if (tipo2!="char" && tipo2!="struct" && tipo2!="reference"){
                                         string value2 = searchInScope(name2,type1,scopeNum).toUtf8().constData();
+                                        log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,1,type1,scopeNum);
+                                        sendMsg(name,this->J.ParseJson(1));
                                     } else {
+                                        log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
                                     }
 
                                 } else {
+                                    log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
                                 }
                             }
@@ -1644,8 +2076,6 @@ void Widget::Recon(QStringList codelines){
                 qDebug() << this->variables << endl;
 
             }
-
-
             //qDebug() << searchInScope2(name,scopeNum) << endl;
 /////////////////////////////////////
 
@@ -1655,45 +2085,6 @@ void Widget::Recon(QStringList codelines){
 }
 
 
-void Widget::on_pushButton_3_clicked()
-{
-    double d = 1.1;
-    int dd = 2;
-    qDebug() << Solve2(d,dd,1) << endl;
-
-    qDebug() << this->variables << "\n";
-
-    //Client *clientGUI = new Client();
-    /*
-    QString plainTextEditContents = ui->plainTextEdit->toPlainText();
-    QStringList lines = plainTextEditContents.split("\n");
-    QStringList licta;
-    //cout << line << "\n"; // Toda la linea
-
-    for (int i = 0;i<lines.size();i++){
-        //qDebug() << lines[i] << "\n";
-        string line = lines[i].toUtf8().constData();
-        vector<string> lineDivided;
-        boost::split(lineDivided, line, boost::is_any_of(" "));
-
-        cout << lineDivided[0] << "\n";
-        QString t = QString::fromStdString(lineDivided[0]);
-        QString n = QString::fromStdString(lineDivided[1]);
-        QString v = QString::fromStdString(lineDivided[2]);
-
-        licta.append(t + "|" + n + "|" + v);
-        qDebug() << licta[i] << "\n";
-    }
-    for (int j = 0;j<licta.size();j++){
-        QStringList licta2 = licta[j].split("|");
-        qDebug() << " t: " << licta2[0] << " n: " << licta2[1] << " v: "<< licta2[2] << "\n";
-
-    }
-    */
-
-    //QStringList lines2 = plainTextEditContents.split("|");
-}
-
 
 
 void Widget::on_pushButton_6_clicked()
@@ -1701,7 +2092,9 @@ void Widget::on_pushButton_6_clicked()
     QString plainTextEditContents = ui->plainTextEdit->toPlainText();
     QStringList lines = plainTextEditContents.split("\n");
     //cout << lines[0].toUtf8().constData() << endl;
-    Recon(lines);
+    Recon(lines,0);
+    //this->J.ParseJson(2);
+
 
 
 }
@@ -1719,6 +2112,26 @@ void Widget::printMensaje(QString msn)
 
 void Widget::on_pushButton_clicked()
 {
+
+    QString plainTextEditContents = ui->plainTextEdit->toPlainText();
+    QStringList lines = plainTextEditContents.split("\n");
+    //cout << lines[0].toUtf8().constData() << endl;
+    Recon(lines,1);
     this->pos+=1;
     cout << this->pos << endl;
+
+}
+
+void Widget::on_dial_3_sliderPressed()
+{
+    ui->plainTextEdit_3->clear();
+}
+
+void Widget::on_pushButton_2_clicked()
+{
+    ui->plainTextEdit->clear();
+    ui->plainTextEdit_4->clear();
+    this->variables.clear();
+    this->pos=1;
+    qDebug() << this->variables << endl;
 }

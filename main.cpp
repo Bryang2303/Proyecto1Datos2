@@ -1,6 +1,6 @@
 #include "widget.h"
 #include <QApplication>
-#include "client.h"
+
 #include "iostream"
 #include "mserver.h"
 #include <iomanip>
@@ -40,12 +40,8 @@ int main(int argc, char *argv[])
     Json J;
     J.ParseJson(2);
 
-    char fecha[25];//ctime devuelve 26 caracteres pero tambien se podría usar un puntero de char
-    time_t current_time;
-    current_time=time(NULL);
-    ctime(&current_time);
-    strcpy(fecha, ctime(&current_time));
-    cout << fecha << endl;
+
+
     //printf("%s", fecha);
 
     int mode = 2;

@@ -10,7 +10,7 @@ Json::Json()
 {
     }
 
-void Json::ParseJson(int posicion)
+QString Json::ParseJson(int posicion)
 {
     QString jsonStr;
     QString fileName = "/home/bryang2303/Proyecto1Datos2/peticiones.json";
@@ -29,6 +29,7 @@ void Json::ParseJson(int posicion)
                 it=it+posicion;
                 QString a =it.value().toString();
                 qDebug()<< a << endl;
+                return a;
 
                 }
             }
