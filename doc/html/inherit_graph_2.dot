@@ -4,5 +4,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
   node [fontname="Helvetica",fontsize="10",shape=record];
   rankdir="LR";
-  Node0 [label="mserver",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classmserver.html",tooltip="The mserver class La clase que permite la creacion del Servidor, asi como su conexion con el Cliente ..."];
+  Node0 [label="Malloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_malloc.html",tooltip="The Malloc class La Clase encargada del control de la memoria por parte del servidor."];
 }

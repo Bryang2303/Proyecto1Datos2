@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['socketcliente_32',['SocketCliente',['../class_socket_cliente.html',1,'']]]
+  ['socketcliente_43',['SocketCliente',['../class_socket_cliente.html',1,'']]]
 ];

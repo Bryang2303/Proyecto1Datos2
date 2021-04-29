@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variables_59',['variables',['../class_widget.html#afb8829eaed2994fb08514c958b4cbdca',1,'Widget']]]
+  ['scope_75',['scope',['../class_widget.html#aded085341beba13397069cac81d1e31b',1,'Widget']]]
 ];

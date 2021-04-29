@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['variables_27',['variables',['../class_widget.html#afb8829eaed2994fb08514c958b4cbdca',1,'Widget']]]
+  ['tipo_32',['tipo',['../structtipo.html',1,'']]],
+  ['type_33',['type',['../class_malloc.html#a63c83c8ad22b5778af95ef1b04a92efa',1,'Malloc']]]
 ];

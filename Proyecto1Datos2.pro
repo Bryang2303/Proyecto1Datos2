@@ -28,13 +28,16 @@ SOURCES += \
         widget.cpp \
     mserver.cpp \
     socketcliente.cpp \
-    json.cpp
+    json.cpp \
+    malloc.cpp
 
 HEADERS += \
         widget.h \
     mserver.h \
     socketcliente.h \
-    json.h
+    json.h \
+    malloc.h
+
 OTHER_FILES += \
     peticiones.json
 

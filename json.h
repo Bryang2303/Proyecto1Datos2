@@ -1,7 +1,9 @@
 #ifndef JSON_H
 #define JSON_H
 #include<QString>
-
+/**
+ * @brief The Json class Clase encagada de la integracion y manejo del archivo json
+ */
 class Json
 {
 

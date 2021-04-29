@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['mserver_38',['mserver',['../classmserver.html#ac7899e42fa30fb86345faed6d6e9f01d',1,'mserver']]]
+  ['malloc_51',['Malloc',['../class_malloc.html#aad691c664814da5858da4884eccb4ca8',1,'Malloc']]],
+  ['mserver_52',['mserver',['../classmserver.html#ac7899e42fa30fb86345faed6d6e9f01d',1,'mserver']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['widget_17',['Widget',['../class_widget.html',1,'']]]
+  ['widget_45',['Widget',['../class_widget.html',1,'']]]
 ];
