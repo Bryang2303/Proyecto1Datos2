@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "socketcliente.h"
 #include <json.h>
+#include <malloc.h>
 namespace Ui {
 
 class Widget;
@@ -138,6 +139,12 @@ public:
      * @param Jaction Tipo de solicitud que realiza el Json
      */
     void sendMsg(QString n, QString Jaction);
+
+    Malloc malloc;
+
+    QStringList RView;
+
+    void RamView(QStringList RView);
 
 private:
     Ui::Widget *ui;

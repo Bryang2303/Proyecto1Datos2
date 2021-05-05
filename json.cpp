@@ -48,7 +48,7 @@ void Json::CreateJsonFile(){
 QString Json::ParseJson(int posicion)
 {
     QString jsonStr;
-    QString fileName = "/home/bryang2303/build-Proyecto1Datos2-Desktop_Qt_5_9_1_GCC_64bit-Debug/PeticionIDE.json";
+    QString fileName = "/home/bryang2303/build-Proyecto1Datos2-Desktop_Qt_5_9_1_GCC_64bit-Debug/respuestaS.json";
     QFile myFile(fileName);
     if (myFile.exists()){
         if(myFile.open(QIODevice::ReadOnly | QIODevice::Text)){

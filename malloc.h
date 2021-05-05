@@ -1,6 +1,9 @@
 #ifndef MALLOC_H
 #define MALLOC_H
 #include <QString>
+#include <QStringList>
+#include <iostream>
+using namespace std;
 /**
  * @brief The Malloc class La Clase encargada del control de la memoria por parte del servidor
  */
@@ -10,7 +13,7 @@ public:
     /**
      * @brief peticion La peticion
      */
-    int peticion;
+    QString peticion;
     /**
      * @brief type El tipo de la variable
      */
@@ -24,13 +27,25 @@ public:
      */
     QString nombre;
     /**
-     * @brief v_asignadas La variable asignada
+     * @brief v_asignada La variable asignada formato RAM VIEW
      */
-    QString v_asignadas;
+    QString v_asignada;
     /**
-     * @brief v_A Variables asignadas anteriormente
+     * @brief v_YA Variables asignadas anteriormente con todos los datos relacionados
      */
-    QString v_A;
+    QString v_YA;
+    /**
+     * @brief memoryspace Variable que cumple el papel de offset para recorrer la memoria para obtener una posición
+     */
+    QString memoryspace;
+    /**
+     * @brief referencia Variable que indica la referencia de la variable
+     */
+    QString referencia;
+    /**
+     * @brief first Variables booleana que indica si se esta corriendo por primera ves o no
+     */
+    bool first = true;
 
     /**
      * @brief Malloc El constructor de la clase
@@ -41,10 +56,26 @@ public:
      */
     void Principal();
     /**
-     * @brief Dividir Divide el mensaje que ha sido enviado por el cliente
-     * @param ejemplo Ejemplo del mensaje dividido
+     * @brief CreateJsonServerFile Crea el archivo .json con la respuesta del servidor
      */
-    void Dividir(QString ejemplo);
+    void CreateJsonServerFile();
+    /**
+     * @brief WriteJsonServerEscribe el archivo .json con la respuesta del servidor
+     */
+    void WriteJsonServer();
+    /**
+     * @brief LeerJson Lee el archivo .json que envia el ciente
+     */
+    void LeerJson();
+    /**
+     * @brief Memoria Muestra la posición de memoria  de una variable
+     * @param offset posicion en el bloque de memoria que se encuentra una variable
+     */
+    struct tipo* Memoria(int offset);
+    /**
+     * @brief getV_asignada return a la lista que se utilizar en la RAMVIEWLIVE
+     */
+    QStringList getV_asignada();
 };
 
 #endif // MALLOC_H
