@@ -1,0 +1,146 @@
+\hypertarget{class_malloc}{}\doxysection{Malloc Class Reference}
+\label{class_malloc}\index{Malloc@{Malloc}}
+
+
+The \mbox{\hyperlink{class_malloc}{Malloc}} class La Clase encargada del control de la memoria por parte del servidor.  
+
+
+
+
+{\ttfamily \#include $<$malloc.\+h$>$}
+
+
+
+Collaboration diagram for Malloc\+:
+% FIG 0
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_malloc_aad691c664814da5858da4884eccb4ca8}{Malloc}} ()
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{class_malloc}{Malloc}} El constructor de la clase. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_malloc_a80256e5c97acdb07967e2e9538974329}{Principal}} ()
+\begin{DoxyCompactList}\small\item\em Principal Donde se realiza todo el reconocimiento de los valores. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_malloc_adffc82b6335eda6257f957d0ef5a73a7}{Create\+Json\+Server\+File}} ()
+\begin{DoxyCompactList}\small\item\em Create\+Json\+Server\+File Crea el archivo .json con la respuesta del servidor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_malloc_a529aa22e408f2b460add3c8bf5b82d41}{Write\+Json\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Write\+Json\+Server\+Escribe el archivo .json con la respuesta del servidor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_malloc_a5e2676a6e75cd906fe6ea94b0a17b624}{Leer\+Json}} ()
+\begin{DoxyCompactList}\small\item\em Leer\+Json Lee el archivo .json que envia el ciente. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtipo}{tipo}} $\ast$ \mbox{\hyperlink{class_malloc_a3f1f269112867c74dff449adaa7e20ae}{Memoria}} (int offset)
+\begin{DoxyCompactList}\small\item\em Memoria Muestra la posición de memoria de una variable. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_a46a2bdc0010afc3ded8b32287484c378}\label{class_malloc_a46a2bdc0010afc3ded8b32287484c378}} 
+Q\+String\+List \mbox{\hyperlink{class_malloc_a46a2bdc0010afc3ded8b32287484c378}{get\+V\+\_\+asignada}} ()
+\begin{DoxyCompactList}\small\item\em get\+V\+\_\+asignada return a la lista que se utilizar en la R\+A\+M\+V\+I\+E\+W\+L\+I\+VE \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_malloc_a9b2f7e5cdeb94467cc198cd9db5e3da0}\label{class_malloc_a9b2f7e5cdeb94467cc198cd9db5e3da0}} 
+Q\+String \mbox{\hyperlink{class_malloc_a9b2f7e5cdeb94467cc198cd9db5e3da0}{peticion}}
+\begin{DoxyCompactList}\small\item\em peticion La peticion \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_a63c83c8ad22b5778af95ef1b04a92efa}\label{class_malloc_a63c83c8ad22b5778af95ef1b04a92efa}} 
+Q\+String \mbox{\hyperlink{class_malloc_a63c83c8ad22b5778af95ef1b04a92efa}{type}}
+\begin{DoxyCompactList}\small\item\em type El tipo de la variable \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_a686a8d4ee18095f2af330acfc73bb2a5}\label{class_malloc_a686a8d4ee18095f2af330acfc73bb2a5}} 
+Q\+String \mbox{\hyperlink{class_malloc_a686a8d4ee18095f2af330acfc73bb2a5}{valor}}
+\begin{DoxyCompactList}\small\item\em valor El valor de la variable \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_a072cfb5616d9aff0e31aa8770b7c568c}\label{class_malloc_a072cfb5616d9aff0e31aa8770b7c568c}} 
+Q\+String \mbox{\hyperlink{class_malloc_a072cfb5616d9aff0e31aa8770b7c568c}{nombre}}
+\begin{DoxyCompactList}\small\item\em nombre El nombre de la variable \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_a5320f820c78a1235d5c518da101805c5}\label{class_malloc_a5320f820c78a1235d5c518da101805c5}} 
+struct \mbox{\hyperlink{structtipo}{tipo}} $\ast$ \mbox{\hyperlink{class_malloc_a5320f820c78a1235d5c518da101805c5}{blockmemory}}
+\begin{DoxyCompactList}\small\item\em v\+\_\+asignada La variable asignada formato R\+AM V\+I\+EW \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_a009380414650eab1e203a371521db32f}\label{class_malloc_a009380414650eab1e203a371521db32f}} 
+Q\+String\+List {\bfseries v\+\_\+asignada}
+\item 
+\mbox{\Hypertarget{class_malloc_a82cb282eecfd8a8a86539af3dee36f22}\label{class_malloc_a82cb282eecfd8a8a86539af3dee36f22}} 
+Q\+String\+List {\bfseries v\+\_\+\+YA}
+\item 
+\mbox{\Hypertarget{class_malloc_ac3679590343c5ec012eb9c82a7f0cf05}\label{class_malloc_ac3679590343c5ec012eb9c82a7f0cf05}} 
+Q\+String \mbox{\hyperlink{class_malloc_ac3679590343c5ec012eb9c82a7f0cf05}{memoryspace}}
+\begin{DoxyCompactList}\small\item\em memoryspace Variable que cumple el papel de offset para recorrer la memoria para obtener una posición \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_ad9608fb13e12bb416f2f185d926c5a26}\label{class_malloc_ad9608fb13e12bb416f2f185d926c5a26}} 
+Q\+String \mbox{\hyperlink{class_malloc_ad9608fb13e12bb416f2f185d926c5a26}{referencia}}
+\begin{DoxyCompactList}\small\item\em referencia Variable que indica la referencia de la variable \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_malloc_a6979d74ed21b330643cd7eca2034993f}\label{class_malloc_a6979d74ed21b330643cd7eca2034993f}} 
+bool \mbox{\hyperlink{class_malloc_a6979d74ed21b330643cd7eca2034993f}{first}} = true
+\begin{DoxyCompactList}\small\item\em first Variables booleana que indica si se esta corriendo por primera ves o no \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \mbox{\hyperlink{class_malloc}{Malloc}} class La Clase encargada del control de la memoria por parte del servidor. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_malloc_aad691c664814da5858da4884eccb4ca8}\label{class_malloc_aad691c664814da5858da4884eccb4ca8}} 
+\index{Malloc@{Malloc}!Malloc@{Malloc}}
+\index{Malloc@{Malloc}!Malloc@{Malloc}}
+\doxysubsubsection{\texorpdfstring{Malloc()}{Malloc()}}
+{\footnotesize\ttfamily Malloc\+::\+Malloc (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\mbox{\hyperlink{class_malloc}{Malloc}} El constructor de la clase. 
+
+Constructor 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_malloc_adffc82b6335eda6257f957d0ef5a73a7}\label{class_malloc_adffc82b6335eda6257f957d0ef5a73a7}} 
+\index{Malloc@{Malloc}!CreateJsonServerFile@{CreateJsonServerFile}}
+\index{CreateJsonServerFile@{CreateJsonServerFile}!Malloc@{Malloc}}
+\doxysubsubsection{\texorpdfstring{CreateJsonServerFile()}{CreateJsonServerFile()}}
+{\footnotesize\ttfamily void Malloc\+::\+Create\+Json\+Server\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create\+Json\+Server\+File Crea el archivo .json con la respuesta del servidor. 
+
+Funcion para crear el archivo \mbox{\hyperlink{class_json}{Json}} correspondiente a la respuesta del servidor \mbox{\Hypertarget{class_malloc_a5e2676a6e75cd906fe6ea94b0a17b624}\label{class_malloc_a5e2676a6e75cd906fe6ea94b0a17b624}} 
+\index{Malloc@{Malloc}!LeerJson@{LeerJson}}
+\index{LeerJson@{LeerJson}!Malloc@{Malloc}}
+\doxysubsubsection{\texorpdfstring{LeerJson()}{LeerJson()}}
+{\footnotesize\ttfamily void Malloc\+::\+Leer\+Json (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Leer\+Json Lee el archivo .json que envia el ciente. 
+
+Funcion para Leer el archivo .json creado por el I\+DE con la petición requerida \mbox{\Hypertarget{class_malloc_a3f1f269112867c74dff449adaa7e20ae}\label{class_malloc_a3f1f269112867c74dff449adaa7e20ae}} 
+\index{Malloc@{Malloc}!Memoria@{Memoria}}
+\index{Memoria@{Memoria}!Malloc@{Malloc}}
+\doxysubsubsection{\texorpdfstring{Memoria()}{Memoria()}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structtipo}{tipo}} $\ast$ Malloc\+::\+Memoria (\begin{DoxyParamCaption}\item[{int}]{offset }\end{DoxyParamCaption})}
+
+
+
+Memoria Muestra la posición de memoria de una variable. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em offset} & posicion en el bloque de memoria que se encuentra una variable\\
+\hline
+\end{DoxyParams}
+Funcion para devolver la posición de memoria solicitada \mbox{\Hypertarget{class_malloc_a80256e5c97acdb07967e2e9538974329}\label{class_malloc_a80256e5c97acdb07967e2e9538974329}} 
+\index{Malloc@{Malloc}!Principal@{Principal}}
+\index{Principal@{Principal}!Malloc@{Malloc}}
+\doxysubsubsection{\texorpdfstring{Principal()}{Principal()}}
+{\footnotesize\ttfamily void Malloc\+::\+Principal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Principal Donde se realiza todo el reconocimiento de los valores. 
+
+Funcion donde se genera el unico malloc y se crean las funciones de cada petición \mbox{\Hypertarget{class_malloc_a529aa22e408f2b460add3c8bf5b82d41}\label{class_malloc_a529aa22e408f2b460add3c8bf5b82d41}} 
+\index{Malloc@{Malloc}!WriteJsonServer@{WriteJsonServer}}
+\index{WriteJsonServer@{WriteJsonServer}!Malloc@{Malloc}}
+\doxysubsubsection{\texorpdfstring{WriteJsonServer()}{WriteJsonServer()}}
+{\footnotesize\ttfamily void Malloc\+::\+Write\+Json\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Write\+Json\+Server\+Escribe el archivo .json con la respuesta del servidor. 
+
+Funcion para asignar los que se desea escribir en el archivo \mbox{\hyperlink{class_json}{Json}} 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/bryang2303/\+Proyecto1\+Datos2/malloc.\+h\item 
+/home/bryang2303/\+Proyecto1\+Datos2/malloc.\+cpp\end{DoxyCompactItemize}

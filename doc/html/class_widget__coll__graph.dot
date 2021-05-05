@@ -8,4 +8,8 @@ digraph "Widget"
   Node2 [label="QWidget",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
   Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" J" ,fontname="Helvetica"];
   Node3 [label="Json",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_json.html",tooltip=" "];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" malloc" ,fontname="Helvetica"];
+  Node4 [label="Malloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_malloc.html",tooltip="The Malloc class La Clase encargada del control de la memoria por parte del servidor."];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" blockmemory" ,fontname="Helvetica"];
+  Node5 [label="tipo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtipo.html",tooltip="The tipo struct EStructura que permite el manejo de los diferentes tipos de datos para el control de ..."];
 }

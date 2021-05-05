@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['widget_39',['Widget',['../class_widget.html',1,'Widget'],['../class_widget.html#a29531c7f141e461322981b3b579d4590',1,'Widget::Widget()']]]
+  ['tipo_39',['tipo',['../structtipo.html',1,'']]],
+  ['type_40',['type',['../class_malloc.html#a63c83c8ad22b5778af95ef1b04a92efa',1,'Malloc']]]
 ];

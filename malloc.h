@@ -29,11 +29,9 @@ public:
     /**
      * @brief v_asignada La variable asignada formato RAM VIEW
      */
-    QString v_asignada;
-    /**
-     * @brief v_YA Variables asignadas anteriormente con todos los datos relacionados
-     */
-    QString v_YA;
+    struct tipo *blockmemory;
+    QStringList v_asignada;
+    QStringList v_YA;
     /**
      * @brief memoryspace Variable que cumple el papel de offset para recorrer la memoria para obtener una posición
      */

@@ -142,9 +142,8 @@ public:
 
     Malloc malloc;
 
-    QStringList RView;
 
-    void RamView(QStringList RView);
+    void RamView();
 
 private:
     Ui::Widget *ui;

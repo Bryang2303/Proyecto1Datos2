@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['fecha_8',['fecha',['../class_widget.html#a471a3abc36147e2cb61ce32fa2369bc7',1,'Widget']]]
+  ['datasocket_7',['dataSocket',['../structdata_socket.html',1,'']]],
+  ['date_8',['date',['../class_widget.html#aec25a8056b2cc4b9bcf0354558837f7d',1,'Widget']]]
 ];

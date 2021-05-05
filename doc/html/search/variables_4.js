@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nombre_71',['nombre',['../class_malloc.html#a072cfb5616d9aff0e31aa8770b7c568c',1,'Malloc']]]
+  ['j_82',['J',['../class_widget.html#a8277a4fdf637bf4057a1558e39e3879f',1,'Widget']]]
 ];

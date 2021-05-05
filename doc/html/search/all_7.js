@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['newmensaje_14',['NewMensaje',['../class_socket_cliente.html#a0398a1e4e75753bcdf1e2b463dc468dd',1,'SocketCliente']]],
-  ['nombre_15',['nombre',['../class_malloc.html#a072cfb5616d9aff0e31aa8770b7c568c',1,'Malloc']]]
+  ['j_13',['J',['../class_widget.html#a8277a4fdf637bf4057a1558e39e3879f',1,'Widget']]],
+  ['json_14',['Json',['../class_json.html',1,'']]]
 ];

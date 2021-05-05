@@ -118,12 +118,12 @@ void Malloc::LeerJson()
  */
 struct tipo* Malloc::Memoria(int offset)
 {
-    return (blockmemory+offset);
+    return (this->blockmemory+offset);
 }
 
 
 QStringList Malloc::getV_asignada(){
-    return v_asignada;
+    return this->v_asignada;
 }
 
 /**
@@ -133,7 +133,7 @@ void Malloc::Principal()
 {
     int space_M = 100; //Numeros de bytes
     if (first == true){
-        blockmemory =(tipo*) malloc(space_M * sizeof(tipo)); //es el type-cast
+        this->blockmemory =(tipo*) malloc(space_M * sizeof(tipo)); //es el type-cast
         this->referencia="1";
         this->memoryspace = "0";
         first = false;

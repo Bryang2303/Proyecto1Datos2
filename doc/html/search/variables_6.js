@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['refcont_74',['refCont',['../class_widget.html#a30f193e7653401c8a1603561cca2a1fe',1,'Widget']]]
+  ['nombre_84',['nombre',['../class_malloc.html#a072cfb5616d9aff0e31aa8770b7c568c',1,'Malloc']]]
 ];

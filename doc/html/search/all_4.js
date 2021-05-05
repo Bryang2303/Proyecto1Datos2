@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['isornot_9',['IsOrNot',['../class_widget.html#a63de257a76bfd0ae3cf370f6c7fe899b',1,'Widget']]]
+  ['fecha_9',['fecha',['../class_widget.html#a471a3abc36147e2cb61ce32fa2369bc7',1,'Widget']]],
+  ['first_10',['first',['../class_malloc.html#a6979d74ed21b330643cd7eca2034993f',1,'Malloc']]]
 ];

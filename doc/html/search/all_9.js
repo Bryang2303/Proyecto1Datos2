@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['recon_20',['Recon',['../class_widget.html#a61eeb4ba99b9c9b6a2c35eb5aadf2525',1,'Widget']]],
-  ['refcont_21',['refCont',['../class_widget.html#a30f193e7653401c8a1603561cca2a1fe',1,'Widget']]],
-  ['run_22',['run',['../classmserver.html#a4253b3f967757a68838b48dec5ff958f',1,'mserver']]]
+  ['malloc_16',['Malloc',['../class_malloc.html',1,'Malloc'],['../class_malloc.html#aad691c664814da5858da4884eccb4ca8',1,'Malloc::Malloc()']]],
+  ['memoria_17',['Memoria',['../class_malloc.html#a3f1f269112867c74dff449adaa7e20ae',1,'Malloc']]],
+  ['memoryspace_18',['memoryspace',['../class_malloc.html#ac3679590343c5ec012eb9c82a7f0cf05',1,'Malloc']]],
+  ['mserver_19',['mserver',['../classmserver.html',1,'mserver'],['../classmserver.html#ac7899e42fa30fb86345faed6d6e9f01d',1,'mserver::mserver()']]]
 ];

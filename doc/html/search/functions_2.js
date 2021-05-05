@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['isornot_50',['IsOrNot',['../class_widget.html#a63de257a76bfd0ae3cf370f6c7fe899b',1,'Widget']]]
+  ['getv_5fasignada_56',['getV_asignada',['../class_malloc.html#a46a2bdc0010afc3ded8b32287484c378',1,'Malloc']]]
 ];

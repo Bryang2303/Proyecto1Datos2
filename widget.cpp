@@ -61,13 +61,15 @@ Widget::~Widget()
     //        cout << " S1 Contains an equalizer";
 }
 
-void Widget::RamView(QStringList RView){
+void Widget::RamView(){
     ui->plainTextEdit_2->clear();
-    for (int r = 0; r<this->RView.size();k++){
-        ui->plainTextEdit_2->appendPlainText(RView[r]);
+    QStringList RV = malloc.getV_asignada();
+    for (int r = 0; r< RV.size();r++){
+        QString dato = RV[r];
+        qDebug()<< dato << endl;
+        ui->plainTextEdit_2->appendPlainText(dato);
     }
 }
-
 void Widget::log(QString T, QString msgL){
     date();
     string str{this->fecha};
@@ -363,8 +365,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                 J.Write("1",name,type,value);
                                 J.CreateJsonFile();
                                 malloc.Principal();
-                                RView = malloc.getV_asignada();
-                                RamView(RView);
+
+                                RamView();
                             } else {
                                 alreadyIs = 1;
                                 log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -398,8 +400,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),0,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                 } else {
                                     log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     throw "Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea ";
@@ -424,8 +426,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),1));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),2) + "|" + scopeNum);
                             log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
@@ -434,8 +436,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),2));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),3) + "|" + scopeNum);
                             log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
@@ -444,8 +446,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),3));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),4) + "|" + scopeNum);
                             log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
@@ -454,8 +456,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(lineDivided[5].c_str()),4));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                         } else {
                             alreadyIs = 1;
                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -487,8 +489,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),2) + "|" + scopeNum);
@@ -497,8 +499,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),3) + "|" + scopeNum);
@@ -507,8 +509,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),4) + "|" + scopeNum);
@@ -517,8 +519,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(lineDivided[5].c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -557,8 +559,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),2) + "|" + scopeNum);
@@ -567,8 +569,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),3) + "|" + scopeNum);
@@ -577,8 +579,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
@@ -587,8 +589,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(lineDivided[3].c_str()),atoi(value2.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -633,8 +635,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(value3.c_str()),1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(value3.c_str()),2) + "|" + scopeNum);
@@ -643,8 +645,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(value3.c_str()),2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(value3.c_str()),3) + "|" + scopeNum);
@@ -653,8 +655,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(value3.c_str()),3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atoi(value2.c_str()),atoi(value3.c_str()),4) + "|" + scopeNum);
@@ -663,8 +665,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atoi(value2.c_str()),atoi(value3.c_str()),4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),atoi(value3.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -709,8 +711,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                     J.Write("1",name,type,"0");
                     J.CreateJsonFile();
                     malloc.Principal();
-                    RView = malloc.getV_asignada();
-                    RamView(RView);
+
+                    RamView();
                 } else {
                     log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                     cout << "Variable ya existente. Error en la asignacion de valor a una variable en linea " << i << endl;
@@ -754,8 +756,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                 J.Write("1",name,type,value);
                                 J.CreateJsonFile();
                                 malloc.Principal();
-                                RView = malloc.getV_asignada();
-                                RamView(RView);
+
+                                RamView();
                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                             } else {
                                 alreadyIs = 1;
@@ -786,8 +788,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,0,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,0,1).toUtf8().constData() << endl;
                                 } else {
                                     log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -813,8 +815,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(d,d2,1));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(d,d2,2) + "|" + scopeNum);
                             log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
@@ -823,8 +825,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(d,d2,2));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                             this->variables.append(name + "|" + type + "|" + Solve2(d,d2,3) + "|" + scopeNum);
                             log("[INFO]","Variable " +name+ " de tipo " + type + " asignada");
@@ -832,8 +834,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(d,d2,3));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,3).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
@@ -843,8 +845,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(d,d2,4));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,4).toUtf8().constData() << endl;
 
                         } else {
@@ -878,8 +880,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d2,d,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d2,d,2) + "|" + scopeNum);
@@ -888,8 +890,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d2,d,2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d2,d,3) + "|" + scopeNum);
@@ -898,8 +900,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d2,d,3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d2,d,4) + "|" + scopeNum);
@@ -908,8 +910,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d2,d,4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d2,d,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -950,8 +952,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,2) + "|" + scopeNum);
@@ -960,8 +962,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,3) + "|" + scopeNum);
@@ -970,8 +972,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,4) + "|" + scopeNum);
@@ -980,8 +982,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1029,8 +1031,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,2) + "|" + scopeNum);
@@ -1039,8 +1041,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,3) + "|" + scopeNum);
@@ -1049,8 +1051,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(d,d2,4) + "|" + scopeNum);
@@ -1059,8 +1061,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(d,d2,4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(d,d2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1098,8 +1100,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                     J.Write("1",name,type,"0");
                     J.CreateJsonFile();
                     malloc.Principal();
-                    RView = malloc.getV_asignada();
-                    RamView(RView);
+
+                    RamView();
 
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                 } else {
@@ -1146,8 +1148,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                 J.Write("1",name,type,value);
                                 J.CreateJsonFile();
                                 malloc.Principal();
-                                RView = malloc.getV_asignada();
-                                RamView(RView);
+
+                                RamView();
                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                             } else {
                                 alreadyIs = 1;
@@ -1178,8 +1180,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,0,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,0,1).toUtf8().constData() << endl;
                                 } else {
                                     log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -1203,8 +1205,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(f,f2,1));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,1).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
@@ -1214,8 +1216,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(f,f2,2));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,2).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
@@ -1225,8 +1227,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(f,f2,3));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,3).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
@@ -1236,8 +1238,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve2(f,f2,4));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,4).toUtf8().constData() << endl;
 
                         } else {
@@ -1272,8 +1274,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f2,f,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f2,f,2) + "|" + scopeNum);
@@ -1282,8 +1284,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f2,f,2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f2,f,3) + "|" + scopeNum);
@@ -1292,8 +1294,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f2,f,3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f2,f,4) + "|" + scopeNum);
@@ -1302,8 +1304,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f2,f,4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f2,f,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1346,8 +1348,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,2) + "|" + scopeNum);
@@ -1356,8 +1358,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,3) + "|" + scopeNum);
@@ -1366,8 +1368,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,4) + "|" + scopeNum);
@@ -1376,8 +1378,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1425,8 +1427,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,2) + "|" + scopeNum);
@@ -1435,8 +1437,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,3) + "|" + scopeNum);
@@ -1445,8 +1447,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve2(f,f2,4) + "|" + scopeNum);
@@ -1455,8 +1457,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve2(f,f2,4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve2(f,f2,4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1492,8 +1494,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                     J.Write("1",name,type,"0");
                     J.CreateJsonFile();
                     malloc.Principal();
-                    RView = malloc.getV_asignada();
-                    RamView(RView);
+
+                    RamView();
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                     if (runKind==1){
                         Counting(name);
@@ -1542,8 +1544,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                 J.Write("1",name,type,value);
                                 J.CreateJsonFile();
                                 malloc.Principal();
-                                RView = malloc.getV_asignada();
-                                RamView(RView);
+
+                                RamView();
                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                                 if (runKind==1){
                                     Counting(name);
@@ -1579,8 +1581,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),0,1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atoi(value2.c_str()),0,1).toUtf8().constData() << endl;
                                 } else {
                                     log("[ERROR]","Variable fuera del scope o indefinida. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -1603,8 +1605,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),1));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),1).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="-" && this->alreadyIs==0){
@@ -1614,8 +1616,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),2));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),2).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="*" && this->alreadyIs==0){
@@ -1625,8 +1627,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),3));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),3).toUtf8().constData() << endl;
 
                         } else if (lineDivided[4]=="/" && this->alreadyIs==0){
@@ -1636,8 +1638,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                             J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),4));
                             J.CreateJsonFile();
                             malloc.Principal();
-                            RView = malloc.getV_asignada();
-                            RamView(RView);
+
+                            RamView();
                             cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(lineDivided[5].c_str()),4).toUtf8().constData() << endl;
 
                         } else {
@@ -1668,8 +1670,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),2) + "|" + scopeNum);
@@ -1678,8 +1680,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),3) + "|" + scopeNum);
@@ -1688,8 +1690,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),4) + "|" + scopeNum);
@@ -1698,8 +1700,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(lineDivided[5].c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1738,8 +1740,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),2) + "|" + scopeNum);
@@ -1748,8 +1750,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),3) + "|" + scopeNum);
@@ -1758,8 +1760,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),4) + "|" + scopeNum);
@@ -1768,8 +1770,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(lineDivided[3].c_str()),atol(value2.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1813,8 +1815,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(value3.c_str()),1));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),1).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="-" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(value3.c_str()),2) + "|" + scopeNum);
@@ -1823,8 +1825,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(value3.c_str()),2));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),2).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="*" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(value3.c_str()),3) + "|" + scopeNum);
@@ -1833,8 +1835,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(value3.c_str()),3));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),3).toUtf8().constData() << endl;
                                 } else if (lineDivided[4]=="/" && this->alreadyIs==0){
                                     this->variables.append(name + "|" + type + "|" + Solve(atol(value2.c_str()),atol(value3.c_str()),4) + "|" + scopeNum);
@@ -1843,8 +1845,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     J.Write("1",name,type,Solve(atol(value2.c_str()),atol(value3.c_str()),4));
                                     J.CreateJsonFile();
                                     malloc.Principal();
-                                    RView = malloc.getV_asignada();
-                                    RamView(RView);
+
+                                    RamView();
                                     cout << "Variable de tipo " << tipo << " asignada con un valor de " << Solve(atol(value2.c_str()),atol(value3.c_str()),4).toUtf8().constData() << endl;
                                 } else {
                                     alreadyIs = 1;
@@ -1881,8 +1883,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                     J.Write("1",name,type,"0");
                     J.CreateJsonFile();
                     malloc.Principal();
-                    RView = malloc.getV_asignada();
-                    RamView(RView);
+
+                    RamView();
                     cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                     if (runKind==1){
                         Counting(name);
@@ -1934,8 +1936,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                         J.Write("1",name,type,value);
                                         J.CreateJsonFile();
                                         malloc.Principal();
-                                        RView = malloc.getV_asignada();
-                                        RamView(RView);
+
+                                        RamView();
                                         cout << "Variable de tipo " << tipo << " asignada con un valor de " << valor << endl;
                                     } else {
                                         log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -1969,8 +1971,8 @@ void Widget::Recon(QStringList codelines, int runKind){
                                                 J.Write("1",name,type,value3);
                                                 J.CreateJsonFile();
                                                 malloc.Principal();
-                                                RView = malloc.getV_asignada();
-                                                RamView(RView);
+
+                                                RamView();
                                                 cout << "Variable de tipo " << tipo << " asignada con un valor de " << value3.toUtf8().constData() << endl;
                                             } else {
                                                 log("[ERROR]","Dimension de la variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -2004,6 +2006,11 @@ void Widget::Recon(QStringList codelines, int runKind){
                         this->variables.append(name + "|" + type + "|" + "0" + "|" + scopeNum);
                         log("[INFO]","Variable " +name+ " de tipo " + type + " definida sin valor asignado");
                         sendMsg(name,this->J.ParseJson(0));
+                        J.Write("1",name,type,"0");
+                        J.CreateJsonFile();
+                        malloc.Principal();
+
+                        RamView();
                         cout << "Variable " << nombre << " de tipo " << tipo << " definida sin valor asignado " << endl;
                     } else {
                         log("[ERROR]","Variable ya existente. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -2038,6 +2045,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                                 cout << "a ver " << atoi(lineDivided[2].c_str()) << endl;
                                 setValue(name,atoi(lineDivided[2].c_str()),type1,scopeNum);
                                 sendMsg(name,this->J.ParseJson(1));
+                                QString lue = QString::number(atoi(lineDivided[2].c_str()));
+                                J.Write("2",name,type,lue);
+                                J.CreateJsonFile();
 
                                 if (runKind==1){
                                     Counting(name);
@@ -2058,6 +2068,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                                         log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,atoi(value2.c_str()),type1,scopeNum);
                                         sendMsg(name,this->J.ParseJson(1));
+                                        QString lue = QString::number(atoi(lineDivided[2].c_str()));
+                                        J.Write("2",name,type,lue);
+                                        J.CreateJsonFile();
                                     } else {
                                         log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
@@ -2072,6 +2085,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                             if (atol(lineDivided[2].c_str())){
                                 cout << "a ver " << atoi(lineDivided[2].c_str()) << endl;
                                 setValue(name,atol(lineDivided[2].c_str()),type4,scopeNum);
+                                QString lue = QString::number(atol(lineDivided[2].c_str()));
+                                J.Write("2",name,type,lue);
+                                J.CreateJsonFile();
                                 sendMsg(name,this->J.ParseJson(1));
                                 if (runKind==1){
                                     Counting(name);
@@ -2091,6 +2107,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                                         string value2 = searchInScope(name2,type4,scopeNum).toUtf8().constData();
                                         log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,atol(value2.c_str()),type4,scopeNum);
+                                        QString lue = QString::number(atol(value2.c_str()));
+                                        J.Write("2",name,type,lue);
+                                        J.CreateJsonFile();
                                         sendMsg(name,this->J.ParseJson(1));
                                     } else {
                                         log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -2109,6 +2128,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                             if (istringstream(lineDivided[2]) >> d){
                                 cout << "a ver " << d << endl;
                                 setValue(name,d,type4,scopeNum);
+                                QString lue = QString::number(d);
+                                J.Write("2",name,type,lue);
+                                J.CreateJsonFile();
                                 sendMsg(name,this->J.ParseJson(1));
                                 if (runKind==1){
                                     Counting(name);
@@ -2130,6 +2152,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                                         istringstream(value2) >> d2;
                                         log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,d2,type,scopeNum);
+                                        QString lue = QString::number(d2);
+                                        J.Write("2",name,type,lue);
+                                        J.CreateJsonFile();
                                         sendMsg(name,this->J.ParseJson(1));
                                     } else {
                                         log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -2155,18 +2180,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),1).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),1));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),1));
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="-"){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),2).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),2));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),2));
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="*"){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),3).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),3));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),3));
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="/"){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),4).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),4));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(lineDivided[4].c_str()),4));
+                                    J.CreateJsonFile();
                                 } else {
                                     log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Error en la asignacion de variable" << endl;
@@ -2192,18 +2229,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),1).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),1));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),1));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="-"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),2).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),2));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),2));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="*"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),3).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),3));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),3));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="/"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),4).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),4));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(lineDivided[4].c_str()),4));
+                                            J.CreateJsonFile();
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
@@ -2235,18 +2284,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),1).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),1));
+                                            J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),1));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="-"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),2).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),2));
+                                            J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),2));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="*"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),3).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),3));
+                                            J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),3));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="/"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),4).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),4));
+                                            J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atoi(value3.c_str()),4));
+                                            J.CreateJsonFile();
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
@@ -2286,18 +2347,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),1).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),1));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(value5.c_str()),1));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="-"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),2).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),2));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(value5.c_str()),2));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="*"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),3).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),3));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(value5.c_str()),3));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="/"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),4).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),4));
+                                            J.Write("2",name,type,Solve2(atoi(value3.c_str()),atoi(value5.c_str()),4));
+                                            J.CreateJsonFile();
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
@@ -2322,6 +2395,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                                         log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,1,type1,scopeNum);
                                         sendMsg(name,this->J.ParseJson(1));
+                                        //QString lue = QString::number(atoi(Solve2(atoi(value3.c_str()),atoi(value5.c_str()),1));
+                                        J.Write("2",name,type,"1");
+                                        J.CreateJsonFile();
                                     } else {
                                         log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
@@ -2343,18 +2419,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atol(Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),1).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(atol(Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),1));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),1));
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="-"){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),2).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(atol(Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),2));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),2));
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="*"){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),3).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(atol(Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),3));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),3));
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="/"){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),4).toUtf8().constData()),type1,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    //QString lue = QString::number(atol(Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),4));
+                                    J.Write("2",name,type,Solve2(atoi(lineDivided[2].c_str()),atol(lineDivided[4].c_str()),4));
+                                    J.CreateJsonFile();
                                 } else {
                                     log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Error en la asignacion de variable" << endl;
@@ -2379,18 +2467,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),1).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),1));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),1));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="-"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),2).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),2));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),2));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="*"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),3).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),3));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),3));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="/"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),4).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),4));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(lineDivided[4].c_str()),4));
+                                            J.CreateJsonFile();
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
@@ -2423,18 +2523,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),1).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),1));
+                                            J.Write("2",name,type,Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),1));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="-"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),2).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),2));
+                                            J.Write("2",name,type,Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),2));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="*"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),3).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),3));
+                                            J.Write("2",name,type,Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),3));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="/"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),4).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),4));
+                                            J.Write("2",name,type,Solve2(atol(lineDivided[2].c_str()),atol(value3.c_str()),4));
+                                            J.CreateJsonFile();
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
@@ -2475,18 +2587,30 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),1).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),1));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(value5.c_str()),1));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="-"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),2).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),2));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(value5.c_str()),2));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="*"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),3).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),3));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(value5.c_str()),3));
+                                            J.CreateJsonFile();
                                         } else if (lineDivided[3]=="/"){
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),4).toUtf8().constData()),type,scopeNum);
                                             sendMsg(name,this->J.ParseJson(1));
+                                            //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),4));
+                                            J.Write("2",name,type,Solve2(atol(value3.c_str()),atol(value5.c_str()),4));
+                                            J.CreateJsonFile();
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                             cout << "Error en la asignacion de variable" << endl;
@@ -2515,6 +2639,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                                         log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,1,type1,scopeNum);
                                         sendMsg(name,this->J.ParseJson(1));
+                                        //QString lue = QString::number(atol(Solve2(atol(value3.c_str()),atol(value5.c_str()),1));
+                                        J.Write("2",name,type,"1");
+                                        J.CreateJsonFile();
                                     } else {
                                         log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                         cout << "Tipo de variable incompatible" << endl;
@@ -2540,21 +2667,33 @@ void Widget::Recon(QStringList codelines, int runKind){
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    QString lue = QString::number(d);
+                                    J.Write("2",name,type,lue);
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="-"){
                                     istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    QString lue = QString::number(d);
+                                    J.Write("2",name,type,lue);
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="*"){
                                     istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    QString lue = QString::number(d);
+                                    J.Write("2",name,type,lue);
+                                    J.CreateJsonFile();
                                 } else if (lineDivided[3]=="/"){
                                     istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
                                     log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                     setValue(name,d,type,scopeNum);
                                     sendMsg(name,this->J.ParseJson(1));
+                                    QString lue = QString::number(d);
+                                    J.Write("2",name,type,lue);
+                                    J.CreateJsonFile();
                                 } else {
                                     log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
                                     cout << "Error en la asignacion de variable" << endl;
@@ -2581,21 +2720,33 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             istringstream(Solve2(d,d2,1).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
                                             istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
                                             istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
                                             istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -2631,21 +2782,33 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             istringstream(Solve2(d,d2,1).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
                                             istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
                                             istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
                                             istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -2690,21 +2853,33 @@ void Widget::Recon(QStringList codelines, int runKind){
                                             istringstream(Solve2(d,d2,1).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="-"){
                                             istringstream(Solve2(d,d2,2).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="*"){
                                             istringstream(Solve2(d,d2,3).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else if (lineDivided[3]=="/"){
                                             istringstream(Solve2(d,d2,4).toUtf8().constData()) >> d;
                                             log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                             setValue(name,d,type,scopeNum);
+                                            QString lue = QString::number(d);
+                                            J.Write("2",name,type,lue);
+                                            J.CreateJsonFile();
                                             sendMsg(name,this->J.ParseJson(1));
                                         } else {
                                             log("[ERROR]","Operador desconocido. Error en la asignacion de valor a una variable en linea "+QString::number(i));
@@ -2734,6 +2909,9 @@ void Widget::Recon(QStringList codelines, int runKind){
                                         string value2 = searchInScope(name2,type1,scopeNum).toUtf8().constData();
                                         log("[INFO]","Variable " +name+ " ha cambiado su valor");
                                         setValue(name,1,type1,scopeNum);
+                                        //QString lue = QString::number(d);
+                                        J.Write("2",name,type,"1");
+                                        J.CreateJsonFile();
                                         sendMsg(name,this->J.ParseJson(1));
                                     } else {
                                         log("[ERROR]","Tipo de variable incompatible. Error en la asignacion de valor a una variable en linea "+QString::number(i));
