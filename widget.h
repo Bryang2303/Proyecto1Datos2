@@ -37,6 +37,16 @@ public:
      * @brief variables Lista de todas las variables asignadas, con su respectivo valor, tipo y scope en el que se encuentra
      */
     QStringList variables;
+    QStringList codeLines2;
+    int VarCont = 0;
+    /**
+     * @brief refCont Lista de todas las veces que una variable especifica es utilizada
+     */
+    QStringList refCont;
+    QStringList variables3;
+    QStringList variables3Copy;
+    int counters[15]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
     QList<int> scopes = {0};
     /**
      * @brief alreadyIs Permite saber si una variable existe o no
@@ -59,6 +69,7 @@ public:
      */
     Json J;
 
+
     //QString convert(auto);
     /**
      * @brief date Para la obtencion de la fecha que se muestra en los Logs
@@ -69,6 +80,7 @@ public:
      * @param T tipo de aviso
      * @param msgL mensaje de aviso
      */
+    void Counting(QString n);
     void log(QString T, QString msgL);
     /**
      * @brief IsOrNot Permite saber si la variable que se va a declarar, ya ha sido declarado antes o no
@@ -161,6 +173,8 @@ private slots:
      * @brief on_pushButton_2_clicked Detiene el proceso de ejecucion, reiniciando la lista de variables y el contador de recorrido de lineas. Tambien borra todas las instrucciones en el IDE.
      */
     void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
+    void on_pushButton_4_clicked();
 };
 
 #endif // WIDGET_H

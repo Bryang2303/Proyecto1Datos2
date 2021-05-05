@@ -98,8 +98,11 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_widget.html#aec25a8056b2cc4b9bcf0354558837f7d">date</a> ()</td></tr>
 <tr class="memdesc:aec25a8056b2cc4b9bcf0354558837f7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">date Para la obtencion de la fecha que se muestra en los Logs <br /></td></tr>
 <tr class="separator:aec25a8056b2cc4b9bcf0354558837f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5869b4dd245c4177b375892aafd27fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_widget.html#ab5869b4dd245c4177b375892aafd27fd">log</a> (QString T, QString msgL)</td></tr>
-<tr class="memdesc:ab5869b4dd245c4177b375892aafd27fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">log Permite mostrar en pantalla los Logs  <a href="class_widget.html#ab5869b4dd245c4177b375892aafd27fd">More...</a><br /></td></tr>
+<tr class="memitem:a665b5cb5d38e3bbce3cfad03c4a6a1bd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_widget.html#a665b5cb5d38e3bbce3cfad03c4a6a1bd">Counting</a> (QString n)</td></tr>
+<tr class="memdesc:a665b5cb5d38e3bbce3cfad03c4a6a1bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">log Permite mostrar en pantalla los Logs  <a href="class_widget.html#a665b5cb5d38e3bbce3cfad03c4a6a1bd">More...</a><br /></td></tr>
+<tr class="separator:a665b5cb5d38e3bbce3cfad03c4a6a1bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5869b4dd245c4177b375892aafd27fd"><td class="memItemLeft" align="right" valign="top"><a id="ab5869b4dd245c4177b375892aafd27fd"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>log</b> (QString T, QString msgL)</td></tr>
 <tr class="separator:ab5869b4dd245c4177b375892aafd27fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63de257a76bfd0ae3cf370f6c7fe899b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_widget.html#a63de257a76bfd0ae3cf370f6c7fe899b">IsOrNot</a> (QString n, QString t)</td></tr>
 <tr class="memdesc:a63de257a76bfd0ae3cf370f6c7fe899b"><td class="mdescLeft">&#160;</td><td class="mdescRight">IsOrNot Permite saber si la variable que se va a declarar, ya ha sido declarado antes o no.  <a href="class_widget.html#a63de257a76bfd0ae3cf370f6c7fe899b">More...</a><br /></td></tr>
@@ -140,6 +143,25 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 QStringList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_widget.html#afb8829eaed2994fb08514c958b4cbdca">variables</a></td></tr>
 <tr class="memdesc:afb8829eaed2994fb08514c958b4cbdca"><td class="mdescLeft">&#160;</td><td class="mdescRight">variables Lista de todas las variables asignadas, con su respectivo valor, tipo y scope en el que se encuentra <br /></td></tr>
 <tr class="separator:afb8829eaed2994fb08514c958b4cbdca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69dbe29ca3849bccbbf3108f04e3c17d"><td class="memItemLeft" align="right" valign="top"><a id="a69dbe29ca3849bccbbf3108f04e3c17d"></a>
+QStringList&#160;</td><td class="memItemRight" valign="bottom"><b>codeLines2</b></td></tr>
+<tr class="separator:a69dbe29ca3849bccbbf3108f04e3c17d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1670c8ed447d0bbdc4451958a029b58c"><td class="memItemLeft" align="right" valign="top"><a id="a1670c8ed447d0bbdc4451958a029b58c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>VarCont</b> = 0</td></tr>
+<tr class="separator:a1670c8ed447d0bbdc4451958a029b58c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30f193e7653401c8a1603561cca2a1fe"><td class="memItemLeft" align="right" valign="top"><a id="a30f193e7653401c8a1603561cca2a1fe"></a>
+QStringList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_widget.html#a30f193e7653401c8a1603561cca2a1fe">refCont</a></td></tr>
+<tr class="memdesc:a30f193e7653401c8a1603561cca2a1fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">refCont Lista de todas las veces que una variable especifica es utilizada <br /></td></tr>
+<tr class="separator:a30f193e7653401c8a1603561cca2a1fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa00bc899a1c35060122a4cb0a1de9e6e"><td class="memItemLeft" align="right" valign="top"><a id="aa00bc899a1c35060122a4cb0a1de9e6e"></a>
+QStringList&#160;</td><td class="memItemRight" valign="bottom"><b>variables3</b></td></tr>
+<tr class="separator:aa00bc899a1c35060122a4cb0a1de9e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b1c009cd120b4698c4241504ce9d668"><td class="memItemLeft" align="right" valign="top"><a id="a4b1c009cd120b4698c4241504ce9d668"></a>
+QStringList&#160;</td><td class="memItemRight" valign="bottom"><b>variables3Copy</b></td></tr>
+<tr class="separator:a4b1c009cd120b4698c4241504ce9d668"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37f46f10b6fdd8f620832799cef73cb8"><td class="memItemLeft" align="right" valign="top"><a id="a37f46f10b6fdd8f620832799cef73cb8"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>counters</b> [15] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}</td></tr>
+<tr class="separator:a37f46f10b6fdd8f620832799cef73cb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacda822a3f73741af779a64ad60db7e1"><td class="memItemLeft" align="right" valign="top"><a id="aacda822a3f73741af779a64ad60db7e1"></a>
 QList&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>scopes</b> = {0}</td></tr>
 <tr class="separator:aacda822a3f73741af779a64ad60db7e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,6 +189,33 @@ time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="class_widget.html" title="The Widget class La clase que maneja todo lo relacionado con la Interfaz Grafica, asi como las operac...">Widget</a> class La clase que maneja todo lo relacionado con la Interfaz Grafica, asi como las operaciones dentro de la misma. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a665b5cb5d38e3bbce3cfad03c4a6a1bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a665b5cb5d38e3bbce3cfad03c4a6a1bd">&#9670;&nbsp;</a></span>Counting()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Widget::Counting </td>
+          <td>(</td>
+          <td class="paramtype">QString&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log Permite mostrar en pantalla los Logs </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">T</td><td>tipo de aviso </td></tr>
+    <tr><td class="paramname">msgL</td><td>mensaje de aviso </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a63de257a76bfd0ae3cf370f6c7fe899b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a63de257a76bfd0ae3cf370f6c7fe899b">&#9670;&nbsp;</a></span>IsOrNot()</h2>
 
@@ -198,43 +247,6 @@ time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
   <table class="params">
     <tr><td class="paramname">n</td><td>Nombre de la variable a buscar </td></tr>
     <tr><td class="paramname">t</td><td>Tipo de la variable a buscar </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ab5869b4dd245c4177b375892aafd27fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5869b4dd245c4177b375892aafd27fd">&#9670;&nbsp;</a></span>log()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Widget::log </td>
-          <td>(</td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>T</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QString&#160;</td>
-          <td class="paramname"><em>msgL</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>log Permite mostrar en pantalla los Logs </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">T</td><td>tipo de aviso </td></tr>
-    <tr><td class="paramname">msgL</td><td>mensaje de aviso </td></tr>
   </table>
   </dd>
 </dl>
@@ -391,7 +403,7 @@ time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">n</td><td>Nombre de la variable a buscar </td></tr>
-    <tr><td class="paramname">Jaction</td><td>Tipo de solicitud que realiza el <a class="el" href="class_json.html" title="The Json class Clase encagada de la integracion y manejo del archivo json.">Json</a> </td></tr>
+    <tr><td class="paramname">Jaction</td><td>Tipo de solicitud que realiza el <a class="el" href="class_json.html">Json</a> </td></tr>
   </table>
   </dd>
 </dl>

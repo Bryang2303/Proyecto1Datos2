@@ -26,8 +26,11 @@ Collaboration diagram for Widget\+:
 \mbox{\Hypertarget{class_widget_aec25a8056b2cc4b9bcf0354558837f7d}\label{class_widget_aec25a8056b2cc4b9bcf0354558837f7d}} 
 void \mbox{\hyperlink{class_widget_aec25a8056b2cc4b9bcf0354558837f7d}{date}} ()
 \begin{DoxyCompactList}\small\item\em date Para la obtencion de la fecha que se muestra en los Logs \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{class_widget_ab5869b4dd245c4177b375892aafd27fd}{log}} (Q\+String T, Q\+String msgL)
+void \mbox{\hyperlink{class_widget_a665b5cb5d38e3bbce3cfad03c4a6a1bd}{Counting}} (Q\+String n)
 \begin{DoxyCompactList}\small\item\em log Permite mostrar en pantalla los Logs \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_ab5869b4dd245c4177b375892aafd27fd}\label{class_widget_ab5869b4dd245c4177b375892aafd27fd}} 
+void {\bfseries log} (Q\+String T, Q\+String msgL)
+\item 
 void \mbox{\hyperlink{class_widget_a63de257a76bfd0ae3cf370f6c7fe899b}{Is\+Or\+Not}} (Q\+String n, Q\+String t)
 \begin{DoxyCompactList}\small\item\em Is\+Or\+Not Permite saber si la variable que se va a declarar, ya ha sido declarado antes o no. \end{DoxyCompactList}\item 
 auto \mbox{\hyperlink{class_widget_ac65388cb467ed503422719f0bd149026}{Solve2}} (auto uno, auto dos, auto tres)
@@ -56,6 +59,24 @@ int \mbox{\hyperlink{class_widget_a966a57e91adb7197f4c30991fba6ceef}{cont\+Scope
 \mbox{\Hypertarget{class_widget_afb8829eaed2994fb08514c958b4cbdca}\label{class_widget_afb8829eaed2994fb08514c958b4cbdca}} 
 Q\+String\+List \mbox{\hyperlink{class_widget_afb8829eaed2994fb08514c958b4cbdca}{variables}}
 \begin{DoxyCompactList}\small\item\em variables Lista de todas las variables asignadas, con su respectivo valor, tipo y scope en el que se encuentra \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_a69dbe29ca3849bccbbf3108f04e3c17d}\label{class_widget_a69dbe29ca3849bccbbf3108f04e3c17d}} 
+Q\+String\+List {\bfseries code\+Lines2}
+\item 
+\mbox{\Hypertarget{class_widget_a1670c8ed447d0bbdc4451958a029b58c}\label{class_widget_a1670c8ed447d0bbdc4451958a029b58c}} 
+int {\bfseries Var\+Cont} = 0
+\item 
+\mbox{\Hypertarget{class_widget_a30f193e7653401c8a1603561cca2a1fe}\label{class_widget_a30f193e7653401c8a1603561cca2a1fe}} 
+Q\+String\+List \mbox{\hyperlink{class_widget_a30f193e7653401c8a1603561cca2a1fe}{ref\+Cont}}
+\begin{DoxyCompactList}\small\item\em ref\+Cont Lista de todas las veces que una variable especifica es utilizada \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_widget_aa00bc899a1c35060122a4cb0a1de9e6e}\label{class_widget_aa00bc899a1c35060122a4cb0a1de9e6e}} 
+Q\+String\+List {\bfseries variables3}
+\item 
+\mbox{\Hypertarget{class_widget_a4b1c009cd120b4698c4241504ce9d668}\label{class_widget_a4b1c009cd120b4698c4241504ce9d668}} 
+Q\+String\+List {\bfseries variables3\+Copy}
+\item 
+\mbox{\Hypertarget{class_widget_a37f46f10b6fdd8f620832799cef73cb8}\label{class_widget_a37f46f10b6fdd8f620832799cef73cb8}} 
+int {\bfseries counters} \mbox{[}15\mbox{]} =\{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\}
+\item 
 \mbox{\Hypertarget{class_widget_aacda822a3f73741af779a64ad60db7e1}\label{class_widget_aacda822a3f73741af779a64ad60db7e1}} 
 Q\+List$<$ int $>$ {\bfseries scopes} = \{0\}
 \item 
@@ -80,6 +101,23 @@ time\+\_\+t \mbox{\hyperlink{class_widget_aec6499fcfd1c87e2d2f733df6a9dd540}{cur
 The \mbox{\hyperlink{class_widget}{Widget}} class La clase que maneja todo lo relacionado con la Interfaz Grafica, asi como las operaciones dentro de la misma. 
 
 \doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_widget_a665b5cb5d38e3bbce3cfad03c4a6a1bd}\label{class_widget_a665b5cb5d38e3bbce3cfad03c4a6a1bd}} 
+\index{Widget@{Widget}!Counting@{Counting}}
+\index{Counting@{Counting}!Widget@{Widget}}
+\doxysubsubsection{\texorpdfstring{Counting()}{Counting()}}
+{\footnotesize\ttfamily void Widget\+::\+Counting (\begin{DoxyParamCaption}\item[{Q\+String}]{n }\end{DoxyParamCaption})}
+
+
+
+log Permite mostrar en pantalla los Logs 
+
+
+\begin{DoxyParams}{Parameters}
+{\em T} & tipo de aviso \\
+\hline
+{\em msgL} & mensaje de aviso \\
+\hline
+\end{DoxyParams}
 \mbox{\Hypertarget{class_widget_a63de257a76bfd0ae3cf370f6c7fe899b}\label{class_widget_a63de257a76bfd0ae3cf370f6c7fe899b}} 
 \index{Widget@{Widget}!IsOrNot@{IsOrNot}}
 \index{IsOrNot@{IsOrNot}!Widget@{Widget}}
@@ -95,23 +133,6 @@ Is\+Or\+Not Permite saber si la variable que se va a declarar, ya ha sido declar
 {\em n} & Nombre de la variable a buscar \\
 \hline
 {\em t} & Tipo de la variable a buscar \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{class_widget_ab5869b4dd245c4177b375892aafd27fd}\label{class_widget_ab5869b4dd245c4177b375892aafd27fd}} 
-\index{Widget@{Widget}!log@{log}}
-\index{log@{log}!Widget@{Widget}}
-\doxysubsubsection{\texorpdfstring{log()}{log()}}
-{\footnotesize\ttfamily void Widget\+::log (\begin{DoxyParamCaption}\item[{Q\+String}]{T,  }\item[{Q\+String}]{msgL }\end{DoxyParamCaption})}
-
-
-
-log Permite mostrar en pantalla los Logs 
-
-
-\begin{DoxyParams}{Parameters}
-{\em T} & tipo de aviso \\
-\hline
-{\em msgL} & mensaje de aviso \\
 \hline
 \end{DoxyParams}
 \mbox{\Hypertarget{class_widget_a61eeb4ba99b9c9b6a2c35eb5aadf2525}\label{class_widget_a61eeb4ba99b9c9b6a2c35eb5aadf2525}} 

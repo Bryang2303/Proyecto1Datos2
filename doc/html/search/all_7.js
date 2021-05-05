@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['malloc_12',['Malloc',['../class_malloc.html',1,'Malloc'],['../class_malloc.html#aad691c664814da5858da4884eccb4ca8',1,'Malloc::Malloc()']]],
-  ['mserver_13',['mserver',['../classmserver.html',1,'mserver'],['../classmserver.html#ac7899e42fa30fb86345faed6d6e9f01d',1,'mserver::mserver()']]]
+  ['newmensaje_14',['NewMensaje',['../class_socket_cliente.html#a0398a1e4e75753bcdf1e2b463dc468dd',1,'SocketCliente']]],
+  ['nombre_15',['nombre',['../class_malloc.html#a072cfb5616d9aff0e31aa8770b7c568c',1,'Malloc']]]
 ];

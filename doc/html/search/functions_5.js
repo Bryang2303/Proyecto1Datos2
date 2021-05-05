@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['newmensaje_53',['NewMensaje',['../class_socket_cliente.html#a0398a1e4e75753bcdf1e2b463dc468dd',1,'SocketCliente']]]
+  ['principal_54',['Principal',['../class_malloc.html#a80256e5c97acdb07967e2e9538974329',1,'Malloc']]]
 ];

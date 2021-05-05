@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type_76',['type',['../class_malloc.html#a63c83c8ad22b5778af95ef1b04a92efa',1,'Malloc']]]
+  ['scope_75',['scope',['../class_widget.html#aded085341beba13397069cac81d1e31b',1,'Widget']]]
 ];

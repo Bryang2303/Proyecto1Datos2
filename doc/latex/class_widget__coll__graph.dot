@@ -7,5 +7,5 @@ digraph "Widget"
   Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid"];
   Node2 [label="QWidget",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
   Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" J" ];
-  Node3 [label="Json",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_json.html",tooltip="The Json class Clase encagada de la integracion y manejo del archivo json."];
+  Node3 [label="Json",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_json.html",tooltip=" "];
 }

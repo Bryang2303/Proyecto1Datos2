@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['scope_75',['scope',['../class_widget.html#aded085341beba13397069cac81d1e31b',1,'Widget']]]
+  ['refcont_74',['refCont',['../class_widget.html#a30f193e7653401c8a1603561cca2a1fe',1,'Widget']]]
 ];
